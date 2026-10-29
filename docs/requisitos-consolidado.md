@@ -20,7 +20,7 @@ Reúne todos os requisitos de [requisitos-revisado.md](requisitos-revisado.md) (
 | RF-01.3 | Fornecedores e propriedades devem ser exibidos com a localização cadastrada e os dados de conformidade associados (RF-07, RF-08). | M | D |
 | RF-06 | O sistema deve importar a geometria das propriedades a partir de arquivos .shp, .geojson e .kml, informando ao usuário os erros de cada arquivo. | M | T |
 | RF-07 | As propriedades devem manter atualizados a situação do CAR e demais dados cadastrais relevantes (ex.: área, cultura, data da última atualização), com alerta quando houver mudança. | M | T |
-| RF-10 | O sistema deve processar relações de parentesco e grupos econômicos (vários CNPJs/CPFs ligados ao mesmo produtor) para unificar o risco reputacional do grupo. | S | T |
+| RF-10 | O sistema deve processar relações de parentesco e grupos econômicos (vários CNPJs/CPFs ligados ao mesmo produtor) para unificar o risco reputacional do grupo. | M | T |
 
 ### Lotes e rastreabilidade
 
@@ -31,7 +31,7 @@ Reúne todos os requisitos de [requisitos-revisado.md](requisitos-revisado.md) (
 | RF-02.3 | O sistema deve gerar para cada lote um passaporte digital que registre o caminho do lote desde as propriedades de origem até o destino final. | M | D |
 | RF-02.4 | O sistema deve permitir dar baixa no lote ao chegar ao destino final. | M | T |
 | RF-03 | O sistema deve validar a base de fornecedores e lotes, avaliando por onde os lotes passaram e as misturas ocorridas, segundo critérios de conformidade definidos pelo usuário. | M | T |
-| RF-12 | O sistema deve atualizar as informações de lotes a partir de API de ERP ou sistemas de telemetria da operação, com o mínimo de entrada manual. | S | D |
+| RF-12 | O sistema deve atualizar as informações de lotes a partir de API de ERP ou sistemas de telemetria da operação, com o mínimo de entrada manual. | M | D |
 
 ### Conformidade, risco e declarações
 
@@ -45,7 +45,7 @@ Reúne todos os requisitos de [requisitos-revisado.md](requisitos-revisado.md) (
 
 | ID | Requisito | Prior. | Verif. |
 |---|---|---|---|
-| RF-04 | O usuário deve poder ver imagens de satélite sobre fornecedores e propriedades, obtidas de diferentes satélites via API, incluindo alertas de desmatamento, para validar a análise de conformidade. | S | D |
+| RF-04 | O usuário deve poder ver imagens de satélite sobre fornecedores e propriedades, obtidas de diferentes satélites via API, incluindo alertas de desmatamento, para validar a análise de conformidade. | M | D |
 | RF-05 | Fornecedores, propriedades e lotes em trânsito devem aparecer em mapa interativo, com filtro e busca por localização. | M | D |
 
 
@@ -71,7 +71,7 @@ Reúne todos os requisitos de [requisitos-revisado.md](requisitos-revisado.md) (
 | ID | Requisito | Origem | Prior. | Verif. |
 |---|---|---|---|---|
 | RNF-05 | O sistema deve suportar 50.000 fornecedores, 200.000 propriedades e 5 milhões de lotes mantendo as metas de RNF-02 e RNF-03. | — | C | A |
-| RNF-06 | A importação de arquivos geoespaciais (.shp, .geojson, .kml) de até 100 MB deve ser processada em fila, sem bloquear a interface, informando o andamento e os erros por arquivo. | RF-01 | S | D |
+| RNF-06 | A importação de arquivos geoespaciais (.shp, .geojson, .kml) de até 100 MB deve ser processada em fila, sem bloquear a interface, informando o andamento e os erros por arquivo. | RF-06 | S | D |
 
 ### Disponibilidade e confiabilidade
 
@@ -104,7 +104,7 @@ Reúne todos os requisitos de [requisitos-revisado.md](requisitos-revisado.md) (
 | ID | Requisito | Origem | Prior. | Verif. |
 |---|---|---|---|---|
 | RNF-18 | Registros de lotes e DDS devem ter hash armazenado, de modo que qualquer alteração posterior seja detectável. | RF-02, RF-09 | M | T |
-| RNF-19 | Todo dado importado de fonte externa deve guardar fonte, data de obtenção e versão, para reproduzir a análise feita em qualquer data passada. | RF-01, RF-08 | M | T |
+| RNF-19 | Todo dado importado de fonte externa deve guardar fonte, data de obtenção e versão, para reproduzir a análise feita em qualquer data passada. | RF-06, RF-08 | M | T |
 
 ### Interoperabilidade
 
@@ -112,7 +112,7 @@ Reúne todos os requisitos de [requisitos-revisado.md](requisitos-revisado.md) (
 |---|---|---|---|---|
 | RNF-20 | O sistema deve expor API REST documentada em OpenAPI. | RF-12 | S | I |
 | RNF-21 | Importação e exportação devem usar formatos abertos (CSV, GeoJSON, JSON). | — | S | T |
-| RNF-22 | Geometrias devem ser armazenadas em um único sistema de referência (WGS 84, EPSG:4326, por compatibilidade com GeoJSON e APIs de satélite); geometrias importadas em outro sistema (ex.: SIRGAS 2000) devem ser convertidas na importação. | RF-01 | M | T |
+| RNF-22 | Geometrias devem ser armazenadas em um único sistema de referência (WGS 84, EPSG:4326, por compatibilidade com GeoJSON e APIs de satélite); geometrias importadas em outro sistema (ex.: SIRGAS 2000) devem ser convertidas na importação. | RF-01.2, RF-06 | M | T |
 
 ### Usabilidade e portabilidade
 
@@ -159,7 +159,7 @@ Reúne todos os requisitos de [requisitos-revisado.md](requisitos-revisado.md) (
 | RN-10 | A cada atualização das listas oficiais, os lotes de fornecedores afetados, ainda em estoque ou em trânsito, devem ser reavaliados. | RF-08, RN-02 | M | T |
 | RN-11 | A inconformidade de um CPF ou CNPJ estende-se aos demais integrantes do grupo econômico, no score e no bloqueio. | RF-10 | M | T |
 | RN-12 | A remoção de uma inconformidade só pode ser feita por Analista de Conformidade ou superior, com justificativa e documento anexo, e é registrada em auditoria. | RF-01, RNF-15 | M | T |
-| RN-13 | Geometrias de propriedades devem ser válidas; sobreposição com propriedade de outro fornecedor acima de um limite configurável gera alerta de conflito para análise. | RF-01 | S | T |
+| RN-13 | Geometrias de propriedades devem ser válidas; sobreposição com propriedade de outro fornecedor acima de um limite configurável gera alerta de conflito para análise. | RF-01.2, RF-06 | S | T |
 | RN-14 | CAR cancelado, suspenso ou pendente torna a propriedade inconforme; a mudança de status do CAR deve gerar alerta. | RF-07 | M | T |
 
 ### Dupla contagem e lavagem de grãos
