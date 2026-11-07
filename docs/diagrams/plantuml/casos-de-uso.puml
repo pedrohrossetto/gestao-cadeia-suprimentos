@@ -1,0 +1,281 @@
+' Diagramas de casos de uso (PlantUML). Equivalente a docs/casos-de-uso.md (Mermaid).
+' Gerar PNGs: plantuml -tpng docs/casos-de-uso.puml  (um arquivo por @startuml, nomeado pelo identificador)
+
+@startuml uc0-visao-geral
+title 0. Visão geral
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Administrador" as adm
+actor "Analista de\nConformidade" as ana
+actor "Operador de Lotes" as ope
+actor "Auditor" as aud
+actor "Temporizador" as tmp <<sistema>>
+actor "SICAR / Ibama /\nICMBio / Lista suja" as src <<externo>>
+actor "APIs de satélite\ne desmatamento" as sat <<externo>>
+actor "ERP / Telemetria" as erp <<externo>>
+actor "Sistema do comprador" as comp <<externo>>
+
+adm --|> ana
+
+rectangle "Sistema de Gestão da Cadeia de Suprimentos" {
+  usecase "Gerir fornecedores\ne propriedades" as m1
+  usecase "Gerir lotes e\nrastreabilidade" as m2
+  usecase "Gerir conformidade" as m3
+  usecase "Gerir risco e DDS" as m4
+  usecase "Visualizar dados\ngeoespaciais" as m5
+  usecase "Administrar e auditar" as m6
+}
+
+ope --> m1
+ana --> m1
+ope --> m2
+ana --> m3
+ana --> m4
+ope --> m4
+ope --> m5
+ana --> m5
+aud --> m5
+adm --> m6
+aud --> m6
+tmp --> m3
+src --> m3
+sat --> m5
+erp --> m2
+comp --> m4
+@enduml
+
+@startuml uc1-fornecedores-propriedades
+title 1. Fornecedores e propriedades
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Operador de Lotes" as ope
+actor "Analista de\nConformidade" as ana
+actor "Auditor" as aud
+
+rectangle "Fornecedores e propriedades" {
+  usecase "UC01 Cadastrar fornecedor" as uc1
+  usecase "UC02 Cadastrar propriedade" as uc2
+  usecase "UC03 Importar geometria\nde propriedades" as uc3
+  usecase "Validar geometria e converter\npara EPSG:4326" as uc3a
+  usecase "Informar erros da importação" as uc3b
+  usecase "UC04 Gerenciar Áreas" as uc4
+  usecase "UC05 Registrar grupo econômico\ne parentesco" as uc5
+  usecase "UC06 Consultar detalhe de\nfornecedor/propriedade" as uc6
+  usecase "Exibir status dos critérios" as uc6a
+}
+
+ope --> uc1
+ope --> uc2
+ope --> uc3
+ope --> uc4
+ana --> uc5
+ope --> uc6
+ana --> uc6
+aud --> uc6
+
+uc2 ..> uc3a : <<include>>
+uc3 ..> uc3a : <<include>>
+uc6 ..> uc6a : <<include>>
+uc3b .up.> uc3 : <<extend>>
+@enduml
+
+@startuml uc2-lotes-rastreabilidade
+title 2. Lotes e rastreabilidade
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Operador de Lotes" as ope
+actor "Auditor" as aud
+actor "ERP / Telemetria" as erp <<externo>>
+
+rectangle "Lotes e rastreabilidade" {
+  usecase "UC07 Cadastrar lote" as uc7
+  usecase "UC08 Registrar mistura\nou transformação" as uc8
+  usecase "UC09 Transferir lote\nentre fornecedores" as uc9
+  usecase "UC10 Dar baixa no\ndestino final" as uc10
+  usecase "UC11 Gerar passaporte digital" as uc11
+  usecase "Exportar em PDF ou JSON" as uc11a
+  usecase "UC12 Sincronizar lotes com\nERP/telemetria" as uc12
+  usecase "UC13 Consultar balanço de massa\ne origem do lote" as uc13
+  usecase "Verificar saldo e\nregras de massa" as chk
+}
+
+ope --> uc7
+ope --> uc8
+ope --> uc9
+ope --> uc10
+ope --> uc11
+ope --> uc13
+aud --> uc11
+aud --> uc13
+erp --> uc12
+
+uc7 ..> chk : <<include>>
+uc8 ..> chk : <<include>>
+uc9 ..> chk : <<include>>
+uc10 ..> chk : <<include>>
+uc12 ..> uc7 : <<include>>
+uc11a .up.> uc11 : <<extend>>
+@enduml
+
+@startuml uc3-conformidade
+title 3. Conformidade
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Analista de\nConformidade" as ana
+actor "Auditor" as aud
+actor "Temporizador" as tmp <<sistema>>
+actor "SICAR / Ibama /\nICMBio / Lista suja" as src <<externo>>
+
+rectangle "Conformidade" {
+  usecase "UC14 Consultar fontes\nde conformidade" as uc14
+  usecase "Registrar status do critério" as uc14a
+  usecase "Usar última resposta\nem caso de falha" as uc14b
+  usecase "Notificar mudança de\nsituação do CAR" as uc14c
+  usecase "UC15 Gerenciar critérios\ndo usuário" as uc15
+  usecase "Criar critério" as uc15a
+  usecase "Editar, desativar ou\narquivar critério" as uc15b
+  usecase "Simular critério" as uc15c
+  usecase "UC16 Definir perfil\nde validação" as uc16
+  usecase "UC17 Validar lote" as uc17
+  usecase "UC18 Alterar status de critério\nmanualmente" as uc18
+  usecase "Anexar justificativa\ne documento" as uc18a
+  usecase "UC19 Consultar status\nem data passada" as uc19
+  usecase "UC20 Consultar distribuição\nde massa do lote" as uc20
+  usecase "Recalcular status de\nlotes afetados" as rec
+}
+
+tmp --> uc14
+src --> uc14
+ana --> uc15
+ana --> uc16
+ana --> uc17
+ana --> uc18
+ana --> uc19
+aud --> uc19
+ana --> uc20
+aud --> uc20
+
+uc14 ..> uc14a : <<include>>
+uc14b .up.> uc14 : <<extend>>
+uc14c .up.> uc14 : <<extend>>
+uc15a .up.> uc15 : <<extend>>
+uc15b .up.> uc15 : <<extend>>
+uc15c .up.> uc15a : <<extend>>
+uc14a ..> rec : <<include>>
+uc15b ..> rec : <<include>>
+uc18 ..> uc18a : <<include>>
+uc18 ..> uc14a : <<include>>
+uc17 ..> uc20 : <<include>>
+@enduml
+
+@startuml uc4-risco-dds
+title 4. Risco e DDS
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Analista de\nConformidade" as ana
+actor "Operador de Lotes" as ope
+actor "Auditor" as aud
+actor "Sistema do comprador" as comp <<externo>>
+
+rectangle "Risco e DDS" {
+  usecase "UC21 Consultar Score\nde Risco ESG" as uc21
+  usecase "UC22 Configurar pesos do score" as uc22
+  usecase "Recalcular scores" as uc22a
+  usecase "UC23 Marcar lote como expedido" as uc23
+  usecase "UC24 Emitir DDS" as uc24
+  usecase "Validar lote pelo\nperfil vigente" as uc24a
+  usecase "UC25 Transmitir DDS\nao comprador" as uc25
+  usecase "UC26 Retificar ou cancelar DDS" as uc26
+  usecase "UC27 Consultar DDS emitida" as uc27
+}
+
+ana --> uc21
+ope --> uc21
+aud --> uc21
+ana --> uc22
+ope --> uc23
+ana --> uc26
+ana --> uc27
+aud --> uc27
+uc25 --> comp
+
+uc22 ..> uc22a : <<include>>
+uc23 ..> uc24 : <<include>>
+uc24 ..> uc24a : <<include>>
+uc24 ..> uc25 : <<include>>
+uc26 ..> uc25 : <<include>>
+@enduml
+
+@startuml uc5-visualizacao
+title 5. Visualização geoespacial
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Operador de Lotes" as ope
+actor "Analista de\nConformidade" as ana
+actor "Auditor" as aud
+actor "APIs de satélite\ne desmatamento" as sat <<externo>>
+
+rectangle "Visualização" {
+  usecase "UC28 Ver imagem de satélite\nda propriedade" as uc28
+  usecase "Escolher fonte de satélite" as uc28a
+  usecase "UC29 Ver alertas de desmatamento" as uc29
+  usecase "UC30 Explorar mapa interativo" as uc30
+  usecase "Filtrar por critério,\ncultura e UF" as uc30a
+  usecase "Buscar por município\nou coordenadas" as uc30b
+}
+
+ope --> uc28
+ana --> uc28
+aud --> uc28
+ana --> uc29
+aud --> uc29
+ope --> uc30
+ana --> uc30
+aud --> uc30
+uc28 --> sat
+uc29 --> sat
+
+uc28a .up.> uc28 : <<extend>>
+uc29 ..> uc28 : <<include>>
+uc30a .up.> uc30 : <<extend>>
+uc30b .up.> uc30 : <<extend>>
+@enduml
+
+@startuml uc6-administracao
+title 6. Administração e governança
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Administrador" as adm
+actor "Auditor" as aud
+actor "Qualquer usuário" as usr
+
+rectangle "Administração e governança" {
+  usecase "UC31 Autenticar" as uc31
+  usecase "Verificar segundo fator" as uc31a
+  usecase "UC32 Gerenciar usuários\ne perfis" as uc32
+  usecase "UC33 Consultar trilha\nde auditoria" as uc33
+  usecase "UC34 Atender solicitação\nde titular (LGPD)" as uc34
+  usecase "UC35 Manter registro de\ntratamento de dados" as uc35
+  usecase "UC36 Monitorar saúde das fontes\ne integrações" as uc36
+}
+
+usr --> uc31
+adm --> uc32
+adm --> uc33
+aud --> uc33
+adm --> uc34
+adm --> uc35
+adm --> uc36
+
+uc31a .up.> uc31 : <<extend>>
+uc32 ..> uc31 : <<include>>
+uc33 ..> uc31 : <<include>>
+uc34 ..> uc31 : <<include>>
+@enduml
