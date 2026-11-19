@@ -1,0 +1,1007 @@
+# Requisitos NodalTrace — fonte estruturada. Gerado do Google Doc 'requisitos simplifcados' em 19/11/2026.
+projeto:
+  titulo: Documento de Especificação de Requisitos
+  disciplina: Análise e Projeto de Sistemas
+  sistema: Gestão de Cadeia de Suprimentos
+  cliente: '[a definir]'
+  responsavel: Pedro Henrique Carteli Rossetto
+  data: 19/11/2026
+  versao: '2.0'
+estagios:
+- nome: Demo
+  descricao: Apresentação de demonstração ao cliente
+- nome: Piloto
+  descricao: MVP em operação com o primeiro cliente
+- nome: Pós-piloto
+  descricao: Evolução após o piloto
+convencoes:
+- Este documento apresenta e organiza o conjunto completo de requisitos levantados para o sistema de gestão
+  da cadeia de suprimentos, servindo de referência para as etapas de projeto, desenvolvimento, testes
+  e validação.
+- "IDs com ponto (ex.: RF-08.1) são subitens de um requisito dividido para manter cada item atômico; uma\
+  \ referência a RF-02 vale para todos os RF-02.x."
+- "A prioridade indica o estágio de entrega: Demo (apresentação de demonstração ao cliente), Piloto (MVP\
+  \ em operação com o primeiro cliente) e Pós-piloto (evolução após o piloto). Um requisito nunca depende\
+  \ de outro de estágio posterior."
+mini_mundo:
+  descricao:
+  - "O sistema atua na cadeia de suprimentos de grãos: produtores rurais (fornecedores) entregam a produção\
+    \ de suas propriedades a armazéns, tradings e indústrias, que a agrupam em lotes, misturam e transformam\
+    \ antes de entregá-la a compradores."
+  - Compradores e a regulação socioambiental exigem comprovar que os grãos não vêm de propriedades com
+    desmatamento.
+  atores:
+  - Administrador
+  - Analista de Conformidade
+  - Operador de Lotes
+  - Auditor
+  atores_texto: "Atores: Administrador, Analista de Conformidade, Operador de Lotes e Auditor (somente\
+    \ leitura)."
+  entidades:
+  - fornecedor
+  - propriedade
+  - lote
+  - mistura e transformação
+  - critério de conformidade
+  - status de conformidade
+  - perfil de validação
+  - Score de Risco ESG
+  - DDS
+  entidades_texto: "Entidades principais: fornecedor, propriedade, lote, mistura e transformação, critério\
+    \ de conformidade, status de conformidade, perfil de validação, Score de Risco ESG e DDS."
+proposito: Rastrear os grãos desde as propriedades de origem até o destino final, avaliar a conformidade
+  socioambiental de fornecedores, propriedades e lotes por critério e por balanço de massa, calcular o
+  risco ESG e emitir a DDS ao comprador, com trilha de auditoria. Espera-se reduzir o esforço manual de
+  verificação e permitir comprovar a origem de cada lote.
+glossario:
+- termo: Produtor / fornecedor
+  definicao: Pessoa física ou jurídica (CPF/CNPJ) que fornece grãos. No sistema, "fornecedor" é o cadastro
+    do produtor.
+- termo: Propriedade
+  definicao: Imóvel rural de um fornecedor, com localização e geometria.
+- termo: Região
+  definicao: Divisão administrativa (município ou UF) derivada da localização da propriedade.
+- termo: Área
+  definicao: Agrupamento de propriedades definido pelo usuário (RF-01.5).
+- termo: Critério de conformidade
+  definicao: Verificação do catálogo, composta por nome, nível de aplicação (propriedade ou fornecedor),
+    tipo de avaliação com seus parâmetros, fonte de dados, indicação de se é bloqueante e se é eliminatório,
+    e versão. Pode ser do sistema (protegido, só a equipe técnica altera) ou do usuário (criado e editado
+    por Analista de Conformidade ou superior). Cada critério é avaliado de forma independente dos demais.
+- termo: Tipo de avaliação
+  definicao: "Modelo de regra oferecido pelo sistema, parametrizável sem programação: consulta em lista\
+    \ por chave (CPF/CNPJ ou geometria), mapa de valores de um campo (ex.: situação do CAR), limiar numérico\
+    \ sobre um campo cadastral e sobreposição geométrica com uma camada. Um critério é uma instância de\
+    \ um tipo, com seus parâmetros."
+- termo: Status de conformidade (propriedade ou fornecedor)
+  definicao: "Resultado da avaliação de um critério sobre a entidade: conforme, inconforme, não definido\
+    \ (sem avaliação ou sem dado) ou não aplicável (o critério não se aplica à entidade). Cada status\
+    \ guarda a data de avaliação. Não existe status único da entidade, apenas um status por critério."
+- termo: Status de conformidade (lote)
+  definicao: Para cada critério, a distribuição da massa do lote entre conforme, inconforme e não definido,
+    calculada por balanço de massa a partir do status das propriedades e fornecedores de origem, cada
+    critério considerado no seu nível de aplicação. É recalculado quando o status de uma origem muda e
+    pode ser consultado para uma data passada.
+- termo: Perfil de validação
+  definicao: "Conjunto de regras definido pelo usuário (RF-06.1); cada regra indica um critério do catálogo\
+    \ e a tolerância máxima de massa inconforme e não definida (padrão: 0%). Não existe agregação implícita\
+    \ entre critérios: a decisão sim/não sempre se refere ao perfil."
+- termo: Lote validado
+  definicao: Lote que atende todas as regras do perfil de validação vigente na data da avaliação (RF-06.2)
+    e não sofreu alteração de origem desde então.
+- termo: Score de Risco ESG
+  definicao: Valor de 0 a 100, em que 0 é o menor risco e 100 o maior.
+requisitos:
+- id: RF-01.1
+  tipo: funcional
+  grupo: RF-01
+  descricao: O sistema deve permitir cadastrar fornecedores com nome, CPF/CNPJ e contato.
+  estagio: Demo
+  depende_de: []
+  requerido_por:
+  - RF-01.2
+  - RF-04.1
+  - RF-12.1
+  - RS-01
+- id: RF-01.2
+  tipo: funcional
+  grupo: RF-01
+  descricao: O sistema deve permitir cadastrar, para cada fornecedor, uma ou mais propriedades com nome,
+    município/UF, área em hectares, cultura e localização geográfica (ponto ou polígono).
+  estagio: Demo
+  depende_de:
+  - RF-01.1
+  requerido_por:
+  - RF-01.3
+  - RF-01.5
+  - RF-02.1
+  - RF-03.1
+  - RF-05.1
+  - RF-09.1
+  - RF-10.1
+  - RF-12.1
+  - RN-09
+  - RN-11
+- id: RF-01.3
+  tipo: funcional
+  grupo: RF-01
+  descricao: O sistema deve exibir a localização cadastrada nas telas de detalhe de fornecedor e de propriedade.
+  estagio: Demo
+  depende_de:
+  - RF-01.2
+  requerido_por: []
+- id: RF-01.4
+  tipo: funcional
+  grupo: RF-01
+  descricao: O sistema deve exibir, nas telas de detalhe de fornecedor e de propriedade, o status de cada
+    critério aplicável (conforme, inconforme, não definido ou não aplicável), com a data de avaliação
+    e a fonte.
+  estagio: Demo
+  depende_de:
+  - RF-07.1
+  requerido_por:
+  - RF-11.2
+  - RN-06
+- id: RF-01.5
+  tipo: funcional
+  grupo: RF-01
+  descricao: O sistema deve permitir ao usuário criar Áreas e associar propriedades a elas.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-01.2
+  requerido_por: []
+- id: RF-02.1
+  tipo: funcional
+  grupo: RF-02
+  descricao: O sistema deve importar a geometria de propriedades a partir de arquivos .shp, .geojson e
+    .kml.
+  estagio: Piloto
+  depende_de:
+  - RF-01.2
+  requerido_por:
+  - RF-02.2
+  - RNF-12
+  - RN-09
+- id: RF-02.2
+  tipo: funcional
+  grupo: RF-02
+  descricao: O sistema deve informar ao usuário, para cada arquivo importado, os erros encontrados (feição
+    e motivo).
+  estagio: Piloto
+  depende_de:
+  - RF-02.1
+  requerido_por: []
+- id: RF-03.1
+  tipo: funcional
+  grupo: RF-03
+  descricao: O sistema deve consultar a situação do CAR de cada propriedade na base do SICAR ao menos
+    uma vez por dia e registrar o status do critério Situação do CAR (RN-10).
+  estagio: Demo
+  depende_de:
+  - RF-01.2
+  - RF-07.1
+  requerido_por:
+  - RF-03.2
+  - RNF-07.1
+  - RNF-17
+  - RN-10
+- id: RF-03.2
+  tipo: funcional
+  grupo: RF-03
+  descricao: O sistema deve alertar o usuário (notificação na interface) quando a situação do CAR de uma
+    propriedade mudar.
+  estagio: Demo
+  depende_de:
+  - RF-03.1
+  requerido_por:
+  - RF-11.2
+- id: RF-04.1
+  tipo: funcional
+  grupo: RF-04
+  descricao: O sistema deve permitir registrar vínculos de grupo econômico e de parentesco entre fornecedores
+    (CPF/CNPJ).
+  estagio: Pós-piloto
+  depende_de:
+  - RF-01.1
+  requerido_por:
+  - RF-04.2
+  - RN-07
+- id: RF-04.2
+  tipo: funcional
+  grupo: RF-04
+  descricao: O sistema deve estender o status de cada critério entre os integrantes de um grupo econômico,
+    conforme RN-07.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-04.1
+  - RF-07.1
+  requerido_por: []
+- id: RF-05.1
+  tipo: funcional
+  grupo: RF-05
+  descricao: O sistema deve permitir cadastrar lotes com identificação, tonelagem, cultura, data e propriedade(s)
+    de origem, além de parâmetros de qualidade configuráveis pelo usuário.
+  estagio: Demo
+  depende_de:
+  - RF-01.2
+  requerido_por:
+  - RF-05.2
+  - RF-11.1
+  - RF-12.1
+  - RF-13.3
+  - RNF-11
+  - RN-04
+  - RN-11
+  - RN-12
+- id: RF-05.2
+  tipo: funcional
+  grupo: RF-05
+  descricao: O sistema deve registrar o fluxo de lotes como Grafo Acíclico Direcionado (DAG), ligando
+    fornecedores, lotes, misturas e transformações.
+  estagio: Piloto
+  depende_de:
+  - RF-05.1
+  requerido_por:
+  - RF-05.3
+  - RF-05.5
+  - RN-03
+  - RN-13
+- id: RF-05.3
+  tipo: funcional
+  grupo: RF-05
+  descricao: O sistema deve manter o balanço de massa de cada lote, calculando seu saldo disponível a
+    cada entrada, saída ou baixa.
+  estagio: Piloto
+  depende_de:
+  - RF-05.2
+  requerido_por:
+  - RF-05.4
+  - RF-07.2
+  - RN-01
+  - RN-02
+  - RN-05
+- id: RF-05.4
+  tipo: funcional
+  grupo: RF-05
+  descricao: O sistema deve permitir dar baixa em um lote ao chegar ao destino final.
+  estagio: Piloto
+  depende_de:
+  - RF-05.3
+  requerido_por:
+  - RF-13.2
+- id: RF-05.5
+  tipo: funcional
+  grupo: RF-05
+  descricao: O sistema deve gerar para cada etapa do lote um passaporte digital, exibível na tela e exportável
+    em PDF, JSON ou QR Code, que liste em ordem as etapas do lote desde as propriedades de origem até
+    o destino final.
+  estagio: Piloto
+  depende_de:
+  - RF-05.2
+  requerido_por: []
+- id: RF-06.1
+  tipo: funcional
+  grupo: RF-06
+  descricao: "O sistema deve permitir ao usuário definir o perfil de validação: para cada critério do\
+    \ catálogo, ativá-lo e informar a tolerância máxima de massa inconforme e não definida (padrão 0%)."
+  estagio: Piloto
+  depende_de: []
+  requerido_por:
+  - RF-06.2
+  - RN-14
+- id: RF-06.2
+  tipo: funcional
+  grupo: RF-06
+  descricao: O sistema deve avaliar cada lote comparando a distribuição de massa de cada critério (RF-07.2)
+    com o perfil de validação, e registrar o resultado "validado" ou "não validado" com os critérios que
+    falharam.
+  estagio: Piloto
+  depende_de:
+  - RF-06.1
+  - RF-07.2
+  requerido_por:
+  - RF-07.3
+  - RF-11.1
+  - RF-13.4
+  - RNF-03
+- id: RF-07.1
+  tipo: funcional
+  grupo: RF-07
+  descricao: O sistema deve registrar, para cada propriedade e fornecedor, o status de cada critério aplicável,
+    com data de avaliação, fonte e versão do critério.
+  estagio: Demo
+  depende_de: []
+  requerido_por:
+  - RF-01.4
+  - RF-03.1
+  - RF-04.2
+  - RF-07.2
+  - RF-07.4
+  - RF-13.3
+  - RN-08
+  - RN-16
+- id: RF-07.2
+  tipo: funcional
+  grupo: RF-07
+  descricao: O sistema deve calcular, para cada lote e cada critério, a distribuição da massa entre conforme,
+    inconforme e não definido, percorrendo o grafo de origem por balanço de massa.
+  estagio: Piloto
+  depende_de:
+  - RF-05.3
+  - RF-07.1
+  requerido_por:
+  - RF-06.2
+  - RF-07.3
+  - RF-07.4
+  - RF-11.1
+  - RN-05
+  - RN-17
+  - RN-18
+- id: RF-07.3
+  tipo: funcional
+  grupo: RF-07
+  descricao: O sistema deve recalcular a distribuição de massa e reavaliar a validação dos lotes afetados,
+    em estoque ou em trânsito, quando o status de um critério de uma origem mudar.
+  estagio: Piloto
+  depende_de:
+  - RF-06.2
+  - RF-07.2
+  requerido_por: []
+- id: RF-07.4
+  tipo: funcional
+  grupo: RF-07
+  descricao: O sistema deve permitir consultar o status de propriedades, fornecedores e lotes em uma data
+    passada.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-07.1
+  - RF-07.2
+  requerido_por: []
+- id: RF-08.1
+  tipo: funcional
+  grupo: RF-08
+  descricao: O sistema deve permitir criar critérios do usuário a partir de um tipo de avaliação, preenchendo
+    os atributos do critério (ver Glossário).
+  estagio: Demo
+  depende_de: []
+  requerido_por:
+  - RF-08.2
+  - RF-08.3
+- id: RF-08.2
+  tipo: funcional
+  grupo: RF-08
+  descricao: O sistema deve permitir editar, desativar e arquivar critérios do usuário.
+  estagio: Demo
+  depende_de:
+  - RF-08.1
+  requerido_por: []
+- id: RF-08.3
+  tipo: funcional
+  grupo: RF-08
+  descricao: O sistema deve permitir simular um critério do usuário sobre as entidades existentes antes
+    de publicá-lo.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-08.1
+  requerido_por: []
+- id: RF-09.1
+  tipo: funcional
+  grupo: RF-09
+  descricao: O sistema deve exibir imagens de satélite de propriedades, obtidas via API de ao menos duas
+    fontes de satélite selecionáveis pelo usuário.
+  estagio: Demo
+  depende_de:
+  - RF-01.2
+  requerido_por:
+  - RF-09.2
+  - RNF-07.1
+- id: RF-09.2
+  tipo: funcional
+  grupo: RF-09
+  descricao: O sistema deve exibir sobre a imagem da propriedade os alertas de desmatamento obtidos via
+    API.
+  estagio: Demo
+  depende_de:
+  - RF-09.1
+  requerido_por:
+  - RF-11.2
+- id: RF-10.1
+  tipo: funcional
+  grupo: RF-10
+  descricao: O sistema deve exibir fornecedores, propriedades e lotes em trânsito em mapa interativo.
+  estagio: Demo
+  depende_de:
+  - RF-01.2
+  requerido_por:
+  - RF-10.2
+  - RF-10.3
+  - RNF-01
+- id: RF-10.2
+  tipo: funcional
+  grupo: RF-10
+  descricao: O mapa deve permitir filtrar por status de um critério selecionado, cultura e UF.
+  estagio: Piloto
+  depende_de:
+  - RF-10.1
+  requerido_por:
+  - RNF-02
+- id: RF-10.3
+  tipo: funcional
+  grupo: RF-10
+  descricao: O mapa deve permitir buscar por nome de município ou por coordenadas.
+  estagio: Piloto
+  depende_de:
+  - RF-10.1
+  requerido_por:
+  - RNF-02
+- id: RF-11.1
+  tipo: funcional
+  grupo: RF-11
+  descricao: O sistema deve exibir um painel (dashboard) de operação com a quantidade e a massa de lotes
+    em estoque e em trânsito, a massa por status de conformidade (conforme, inconforme, não definido)
+    de um critério selecionado e a quantidade de lotes validados e não validados.
+  estagio: Piloto
+  depende_de:
+  - RF-05.1
+  - RF-06.2
+  - RF-07.2
+  requerido_por:
+  - RF-11.3
+- id: RF-11.2
+  tipo: funcional
+  grupo: RF-11
+  descricao: O sistema deve exibir um painel (dashboard) de fornecedores e propriedades com a quantidade
+    por status de um critério selecionado, por cultura e por UF, e os alertas recentes de CAR e de desmatamento.
+  estagio: Demo
+  depende_de:
+  - RF-01.4
+  - RF-03.2
+  - RF-09.2
+  requerido_por:
+  - RF-11.3
+- id: RF-11.3
+  tipo: funcional
+  grupo: RF-11
+  descricao: Os painéis devem permitir filtrar por período, cultura, UF, fornecedor e critério.
+  estagio: Piloto
+  depende_de:
+  - RF-11.1
+  - RF-11.2
+  requerido_por: []
+- id: RF-12.1
+  tipo: funcional
+  grupo: RF-12
+  descricao: O sistema deve permitir anexar documentos (PDF ou imagem) a fornecedores, propriedades, lotes
+    e transferências, informando o tipo do documento e registrando a data e o usuário do envio.
+  estagio: Demo
+  depende_de:
+  - RF-01.1
+  - RF-01.2
+  - RF-05.1
+  requerido_por:
+  - RF-12.2
+  - RF-12.3
+  - RF-13.2
+  - RN-08
+  - RN-13
+- id: RF-12.2
+  tipo: funcional
+  grupo: RF-12
+  descricao: O sistema deve permitir consultar, filtrar por tipo, entidade e período, e baixar os documentos
+    anexados.
+  estagio: Piloto
+  depende_de:
+  - RF-12.1
+  requerido_por: []
+- id: RF-12.3
+  tipo: funcional
+  grupo: RF-12
+  descricao: "O sistema deve manter as versões de um documento: a substituição gera uma nova versão e\
+    \ preserva as anteriores."
+  estagio: Pós-piloto
+  depende_de:
+  - RF-12.1
+  requerido_por: []
+- id: RF-13.1
+  tipo: funcional
+  grupo: RF-13
+  descricao: O sistema deve permitir cadastrar compradores com nome, CPF/CNPJ e contato.
+  estagio: Piloto
+  depende_de: []
+  requerido_por:
+  - RF-13.2
+- id: RF-13.2
+  tipo: funcional
+  grupo: RF-13
+  descricao: O sistema deve permitir registrar a venda de um lote a um comprador, com data, tonelagem
+    e documento fiscal.
+  estagio: Piloto
+  depende_de:
+  - RF-05.4
+  - RF-12.1
+  - RF-13.1
+  requerido_por:
+  - RF-13.4
+- id: RF-13.3
+  tipo: funcional
+  grupo: RF-13
+  descricao: O sistema deve exibir, no detalhe de cada fornecedor, o histórico de compras (lotes recebidos)
+    com data, cultura, tonelagem, propriedade de origem e o status de cada critério na data do recebimento.
+  estagio: Demo
+  depende_de:
+  - RF-05.1
+  - RF-07.1
+  requerido_por:
+  - RF-13.5
+- id: RF-13.4
+  tipo: funcional
+  grupo: RF-13
+  descricao: O sistema deve exibir, no detalhe de cada comprador, o histórico de vendas com os lotes entregues,
+    data, tonelagem, resultado da validação e os critérios atendidos.
+  estagio: Piloto
+  depende_de:
+  - RF-06.2
+  - RF-13.2
+  requerido_por:
+  - RF-13.5
+- id: RF-13.5
+  tipo: funcional
+  grupo: RF-13
+  descricao: O sistema deve permitir filtrar os históricos de compras e de vendas por período e cultura
+    e exportá-los em CSV.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-13.3
+  - RF-13.4
+  requerido_por: []
+- id: RF-14.1
+  tipo: funcional
+  grupo: RF-14
+  descricao: O sistema deve permitir ao Administrador cadastrar usuários com nome, e-mail e perfil.
+  estagio: Demo
+  depende_de: []
+  requerido_por:
+  - RF-14.2
+  - RF-14.3
+  - RF-14.4
+  - RS-01
+- id: RF-14.2
+  tipo: funcional
+  grupo: RF-14
+  descricao: O sistema deve permitir ao Administrador alterar o perfil de um usuário e desativá-lo, preservando
+    os registros de auditoria associados a ele.
+  estagio: Piloto
+  depende_de:
+  - RF-14.1
+  requerido_por: []
+- id: RF-14.3
+  tipo: funcional
+  grupo: RF-14
+  descricao: "O sistema deve oferecer dois perfis: Administrador, com acesso a todas as funcionalidades\
+    \ e à gestão de usuários, e Usuário, com acesso às demais funcionalidades, sem gerenciar usuários."
+  estagio: Demo
+  depende_de:
+  - RF-14.1
+  requerido_por:
+  - RF-14.6
+- id: RF-14.4
+  tipo: funcional
+  grupo: RF-14
+  descricao: O sistema deve exigir login com e-mail e senha para acesso a qualquer funcionalidade e permitir
+    encerrar a sessão.
+  estagio: Demo
+  depende_de:
+  - RF-14.1
+  requerido_por:
+  - RF-14.5
+  - RNF-08
+  - RNF-09
+- id: RF-14.5
+  tipo: funcional
+  grupo: RF-14
+  descricao: O sistema deve permitir ao usuário redefinir a senha por link enviado ao e-mail cadastrado.
+  estagio: Piloto
+  depende_de:
+  - RF-14.4
+  requerido_por: []
+- id: RF-14.6
+  tipo: funcional
+  grupo: RF-14
+  descricao: "O sistema deve substituir o perfil Usuário por perfis específicos: Auditor apenas consulta;\
+    \ Operador de Lotes cadastra fornecedores, propriedades, lotes e documentos; Analista de Conformidade\
+    \ também gerencia critérios do usuário, perfil de validação e alterações manuais de status."
+  estagio: Piloto
+  depende_de:
+  - RF-14.3
+  requerido_por:
+  - RN-08
+- id: RNF-01
+  tipo: nao_funcional
+  grupo: RNF-01
+  categoria: Desempenho
+  descricao: A visão inicial do mapa deve carregar em até 3 s (percentil 95) com 10.000 propriedades na
+    base.
+  estagio: Piloto
+  depende_de:
+  - RF-10.1
+  requerido_por: []
+- id: RNF-02
+  tipo: nao_funcional
+  grupo: RNF-02
+  categoria: Desempenho
+  descricao: Filtros e buscas do mapa devem responder em até 2 s (percentil 95) com 10.000 propriedades
+    na base.
+  estagio: Piloto
+  depende_de:
+  - RF-10.2
+  - RF-10.3
+  requerido_por: []
+- id: RNF-03
+  tipo: nao_funcional
+  grupo: RNF-03
+  categoria: Desempenho
+  descricao: A avaliação de RF-06.2 de um lote deve concluir em até 10 s (percentil 95) para lotes com
+    até 5 níveis de mistura.
+  estagio: Piloto
+  depende_de:
+  - RF-06.2
+  requerido_por: []
+- id: RNF-04
+  tipo: nao_funcional
+  grupo: RNF-04
+  categoria: Escalabilidade
+  descricao: O sistema deve suportar 50.000 fornecedores, 200.000 propriedades e 5 milhões de lotes, mantendo
+    as metas de RNF-01, RNF-02 e RNF-03.
+  estagio: Pós-piloto
+  depende_de: []
+  requerido_por: []
+- id: RNF-05
+  tipo: nao_funcional
+  grupo: RNF-05
+  categoria: Confiabilidade
+  descricao: O sistema deve ter disponibilidade mensal de 99,5%, excluídas janelas de manutenção comunicadas
+    com antecedência.
+  estagio: Pós-piloto
+  depende_de: []
+  requerido_por: []
+- id: RNF-06
+  tipo: nao_funcional
+  grupo: RNF-06
+  categoria: Confiabilidade
+  descricao: O sistema deve executar backup automático diário, retido por 30 dias.
+  estagio: Piloto
+  depende_de: []
+  requerido_por: []
+- id: RNF-07.1
+  tipo: nao_funcional
+  grupo: RNF-07
+  categoria: Confiabilidade
+  descricao: Se uma API externa (satélite, Ibama, ICMBio, lista suja, SICAR) estiver indisponível, o sistema
+    deve usar a última resposta obtida com sucesso e exibir a data dela.
+  estagio: Piloto
+  depende_de:
+  - RF-09.1
+  - RF-03.1
+  requerido_por:
+  - RNF-07.2
+- id: RNF-07.2
+  tipo: nao_funcional
+  grupo: RNF-07
+  categoria: Confiabilidade
+  descricao: Após falha de consulta a API externa, o sistema deve repetir a consulta com intervalo crescente
+    (backoff exponencial iniciando em 1 min, dobrando a cada tentativa, até o máximo de 1 h).
+  estagio: Piloto
+  depende_de:
+  - RNF-07.1
+  requerido_por: []
+- id: RNF-08
+  tipo: nao_funcional
+  grupo: RNF-08
+  categoria: Segurança
+  descricao: Senhas devem ser armazenadas apenas como hash com salt (bcrypt ou Argon2).
+  estagio: Demo
+  depende_de:
+  - RF-14.4
+  requerido_por:
+  - RNF-09
+- id: RNF-09
+  tipo: nao_funcional
+  grupo: RNF-09
+  categoria: Segurança
+  descricao: O sistema deve oferecer autenticação em dois fatores
+  estagio: Pós-piloto
+  depende_de:
+  - RF-14.4
+  - RNF-08
+  requerido_por: []
+- id: RNF-10.1
+  tipo: nao_funcional
+  grupo: RNF-10
+  categoria: Segurança
+  descricao: O sistema deve registrar em trilha de auditoria (usuário, data/hora, ação, valor anterior
+    e novo) a criação, alteração e exclusão de fornecedores, propriedades, lotes, critérios, perfis de
+    validação, documentos e usuários, e as alterações manuais de status.
+  estagio: Piloto
+  depende_de: []
+  requerido_por:
+  - RNF-10.2
+- id: RNF-10.2
+  tipo: nao_funcional
+  grupo: RNF-10
+  categoria: Segurança
+  descricao: "A trilha de auditoria deve ser append-only: nenhum perfil, inclusive Administrador, pode\
+    \ editar ou excluir registros."
+  estagio: Piloto
+  depende_de:
+  - RNF-10.1
+  requerido_por: []
+- id: RNF-11
+  tipo: nao_funcional
+  grupo: RNF-11
+  categoria: Integridade
+  descricao: Registros de lotes e DDS devem ter hash armazenado, de modo que qualquer alteração posterior
+    seja detectável. Alterações por anonimização (RS-03) geram novo hash, registrado na trilha.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-05.1
+  requerido_por: []
+- id: RNF-12
+  tipo: nao_funcional
+  grupo: RNF-12
+  categoria: Integridade
+  descricao: Todo dado importado de fonte externa deve guardar fonte, data de obtenção e versão, para
+    reproduzir a análise feita em qualquer data passada.
+  estagio: Piloto
+  depende_de:
+  - RF-02.1
+  requerido_por: []
+- id: RNF-13
+  tipo: nao_funcional
+  grupo: RNF-13
+  categoria: Interoperabilidade
+  descricao: O sistema deve expor API REST documentada em OpenAPI.
+  estagio: Pós-piloto
+  depende_de: []
+  requerido_por: []
+- id: RNF-14
+  tipo: nao_funcional
+  grupo: RNF-14
+  categoria: Interoperabilidade
+  descricao: Importação e exportação devem usar formatos abertos (CSV, GeoJSON, JSON).
+  estagio: Piloto
+  depende_de: []
+  requerido_por: []
+- id: RNF-15.1
+  tipo: nao_funcional
+  grupo: RNF-15
+  categoria: Usabilidade
+  descricao: A interface deve ser web e responsiva, utilizável de 360 px de largura até telas de desktop.
+  estagio: Piloto
+  depende_de: []
+  requerido_por: []
+- id: RNF-15.2
+  tipo: nao_funcional
+  grupo: RNF-15
+  categoria: Usabilidade
+  descricao: A interface deve estar em português do Brasil.
+  estagio: Demo
+  depende_de: []
+  requerido_por: []
+- id: RNF-15.3
+  tipo: nao_funcional
+  grupo: RNF-15
+  categoria: Usabilidade
+  descricao: A interface deve funcionar nas duas últimas versões estáveis de Chrome, Firefox e Edge
+  estagio: Piloto
+  depende_de: []
+  requerido_por: []
+- id: RNF-16.1
+  tipo: nao_funcional
+  grupo: RNF-16
+  categoria: Manutenibilidade
+  descricao: O sistema deve gerar logs estruturados em JSON.
+  estagio: Piloto
+  depende_de: []
+  requerido_por: []
+- id: RNF-16.2
+  tipo: nao_funcional
+  grupo: RNF-16
+  categoria: Manutenibilidade
+  descricao: O sistema deve expor métricas de saúde de consultas externas, filas e erros.
+  estagio: Pós-piloto
+  depende_de: []
+  requerido_por: []
+- id: RNF-17
+  tipo: nao_funcional
+  grupo: RNF-17
+  categoria: Manutenibilidade
+  descricao: O sistema deve alertar o administrador quando uma fonte de dados de conformidade (listas
+    de embargo, lista suja, SICAR) ficar mais de 24 h sem consulta bem-sucedida.
+  estagio: Piloto
+  depende_de:
+  - RF-03.1
+  requerido_por: []
+- id: RN-01
+  tipo: regra_de_negocio
+  descricao: A soma das quantidades que saem de um lote (transferências, misturas e baixa) não pode ultrapassar
+    seu saldo disponível, evitando que a mesma quantidade seja contabilizada duas vezes.
+  estagio: Piloto
+  depende_de:
+  - RF-05.3
+  requerido_por: []
+- id: RN-02
+  tipo: regra_de_negocio
+  descricao: Em toda mistura ou transformação, a massa de saída não pode exceder a massa de entrada multiplicada
+    pelo rendimento declarado do processo; o rendimento deve estar dentro de limites configuráveis por
+    tipo de processo.
+  estagio: Piloto
+  depende_de:
+  - RF-05.3
+  requerido_por: []
+- id: RN-03
+  tipo: regra_de_negocio
+  descricao: "O grafo de lotes deve ser acíclico direcionado: um lote não pode ser origem de si mesmo,\
+    \ direta ou indiretamente."
+  estagio: Piloto
+  depende_de:
+  - RF-05.2
+  requerido_por: []
+- id: RN-04
+  tipo: regra_de_negocio
+  descricao: Todo lote deve ser rastreável até ao menos uma propriedade; lote sem origem identificada
+    fica bloqueado para saída até a regularização.
+  estagio: Piloto
+  depende_de:
+  - RF-05.1
+  requerido_por: []
+- id: RN-05
+  tipo: regra_de_negocio
+  descricao: "O status de cada critério de um lote é calculado apenas por balanço de massa: toda massa\
+    \ de saída de uma mistura ou transformação mantém a distribuição proporcional de status das massas\
+    \ de entrada. Massa inconforme ou não definida não pode se tornar conforme por mistura ou repasse."
+  estagio: Piloto
+  depende_de:
+  - RF-05.3
+  - RF-07.2
+  requerido_por: []
+- id: RN-06
+  tipo: regra_de_negocio
+  descricao: Propriedade ou fornecedor com status inconforme em critério marcado como bloqueante não pode
+    ter novos lotes de entrada vinculados até a regularização comprovada.
+  estagio: Piloto
+  depende_de:
+  - RF-01.4
+  requerido_por: []
+- id: RN-07
+  tipo: regra_de_negocio
+  descricao: O status de cada critério de um integrante de grupo econômico estende-se aos demais integrantes,
+    critério a critério, prevalecendo o pior status (inconforme, depois não definido, depois conforme).
+    A extensão não cria critério novo.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-04.1
+  requerido_por: []
+- id: RN-08
+  tipo: regra_de_negocio
+  descricao: A alteração manual do status de um critério exige justificativa e documento anexo e só pode
+    ser feita por usuário com permissão para isso (RF-14.6).
+  estagio: Piloto
+  depende_de:
+  - RF-07.1
+  - RF-12.1
+  - RF-14.6
+  requerido_por: []
+- id: RN-09
+  tipo: regra_de_negocio
+  descricao: Geometrias de propriedades devem ser válidas; sobreposição com propriedade de outro fornecedor
+    acima de 5% da área da menor das duas (limite configurável) gera alerta de conflito para análise.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-01.2
+  - RF-02.1
+  requerido_por: []
+- id: RN-10
+  tipo: regra_de_negocio
+  descricao: No critério Situação do CAR, o status é inconforme se o CAR estiver cancelado, suspenso ou
+    pendente; conforme se estiver ativo; não definido se ainda não houve consulta.
+  estagio: Demo
+  depende_de:
+  - RF-03.1
+  requerido_por: []
+- id: RN-11
+  tipo: regra_de_negocio
+  descricao: O sistema deve alertar quando o volume recebido de uma propriedade no ano exceder a produtividade
+    máxima por hectare da cultura (tabela configurável pelo usuário) multiplicada pela área da propriedade.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-01.2
+  - RF-05.1
+  requerido_por: []
+- id: RN-12
+  tipo: regra_de_negocio
+  descricao: Uma mesma nota fiscal ou documento de transporte não pode ser vinculado a mais de um lote
+    de entrada.
+  estagio: Piloto
+  depende_de:
+  - RF-05.1
+  requerido_por: []
+- id: RN-13
+  tipo: regra_de_negocio
+  descricao: Toda transferência de lote entre fornecedores deve ter documento fiscal anexo e não pode
+    alterar a propriedade de origem registrada no lote.
+  estagio: Piloto
+  depende_de:
+  - RF-05.2
+  - RF-12.1
+  requerido_por: []
+- id: RN-14
+  tipo: regra_de_negocio
+  descricao: Alterações no perfil de validação valem para lotes novos e em estoque, sem alterar retroativamente
+    DDS já emitidas.
+  estagio: Pós-piloto
+  depende_de:
+  - RF-06.1
+  - RN-15
+  requerido_por: []
+- id: RN-15
+  tipo: regra_de_negocio
+  descricao: DDS emitida não pode ser editada nem excluída e preserva o status de conformidade do lote
+    vigente na emissão; correções são feitas por retificação ou cancelamento, vinculados à declaração
+    original.
+  estagio: Pós-piloto
+  depende_de: []
+  requerido_por:
+  - RN-14
+- id: RN-16
+  tipo: regra_de_negocio
+  descricao: "Um status de critério nunca é sobrescrito: cada nova avaliação gera um novo registro, preservando\
+    \ os anteriores."
+  estagio: Demo
+  depende_de:
+  - RF-07.1
+  requerido_por: []
+- id: RN-17
+  tipo: regra_de_negocio
+  descricao: Cada critério é avaliado no seu nível de aplicação (propriedade ou fornecedor), de modo que
+    a mesma massa não seja contada duas vezes no mesmo critério.
+  estagio: Piloto
+  depende_de:
+  - RF-07.2
+  requerido_por: []
+- id: RN-18
+  tipo: regra_de_negocio
+  descricao: "A massa com status não definido nunca é tratada como conforme: permanece como parcela separada\
+    \ na distribuição do lote. Status não aplicável não entra na distribuição."
+  estagio: Piloto
+  depende_de:
+  - RF-07.2
+  requerido_por: []
+- id: RS-01
+  tipo: suplementar
+  categoria: Legal (LGPD)
+  descricao: Cada categoria de dado pessoal tratada (CPF, parentesco, localização) deve ter finalidade
+    e base legal declaradas em registro de tratamento.
+  estagio: Piloto
+  depende_de:
+  - RF-01.1
+  - RF-14.1
+  requerido_por:
+  - RS-02
+  - RS-03
+- id: RS-02
+  tipo: suplementar
+  categoria: Legal (LGPD)
+  descricao: O sistema deve coletar apenas os dados pessoais necessários à finalidade declarada (minimização).
+  estagio: Piloto
+  depende_de:
+  - RS-01
+  requerido_por: []
+- id: RS-03
+  tipo: suplementar
+  categoria: Legal (LGPD)
+  descricao: O sistema deve permitir atender solicitações de titulares (acesso, correção, eliminação ou
+    anonimização) em até 15 dias.
+  estagio: Piloto
+  depende_de:
+  - RS-01
+  requerido_por: []
