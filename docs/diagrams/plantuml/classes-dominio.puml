@@ -1,0 +1,279 @@
+' Diagrama de classes de domínio (PlantUML), refinamento de classes-conceitual.puml; derivado de docs/requisitos_v2.md / requisitos_v2.yaml (v2.0).
+' Inclui navegabilidade, enumerações, atributos derivados e técnicos, histórico/versionamento e controles de integridade.
+' O atributo hash é mantido por ser exigência de domínio (RNF-11). Atributos com "/" são derivados.
+' Gerar PNG: plantuml -tpng docs/diagrams/plantuml/classes-dominio.puml
+
+@startuml classes-dominio
+title Diagrama de Classes de Domínio - Gestão de Cadeia de Suprimentos (v2.0)
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontSize 12
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #444444
+  ArrowColor #444444
+}
+skinparam package {
+  BorderColor #888888
+}
+hide empty members
+skinparam nodesep 100
+skinparam ranksep 120
+
+package "Cadastro e território" {
+  class Fornecedor {
+    nome
+    cpfCnpj
+    contato
+  }
+
+  class GrupoEconomico {
+    nome
+  }
+
+  class Propriedade {
+    nome
+    areaHectares
+    cultura
+    localizacao : ponto | polígono
+  }
+
+  class Regiao {
+    municipio
+    uf
+  }
+
+  class Area {
+    nome
+  }
+}
+
+package "Rastreabilidade" {
+  class Lote {
+    identificacao
+    tonelagem
+    cultura
+    data
+    parametrosQualidade
+    situacao : EM_ESTOQUE | EM_TRANSITO | BAIXADO
+    /saldoDisponivel
+    hash
+  }
+
+  class Procedencia {
+    tonelagem
+  }
+
+  class Processo {
+    data
+    rendimentoDeclarado
+  }
+
+  class TipoProcesso {
+    nome : MISTURA | TRANSFORMACAO
+    rendimentoMinimo
+    rendimentoMaximo
+  }
+
+  class EntradaProcesso {
+    tonelagem
+  }
+
+  class Transferencia {
+    data
+    tonelagem
+  }
+
+  class Baixa {
+    data
+    tonelagem
+  }
+
+  class Comprador {
+    nome
+    cpfCnpj
+    contato
+  }
+
+  class Venda {
+    data
+    tonelagem
+  }
+}
+
+package "Conformidade" {
+  class Criterio {
+    nome
+    tipoAvaliacao : TipoAvaliacao
+    parametros
+    nivelAplicacao : PROPRIEDADE | FORNECEDOR
+    bloqueante
+    eliminatorio
+    versao
+    origem : SISTEMA | USUARIO
+    situacao : ATIVO | DESATIVADO | ARQUIVADO
+  }
+
+  enum TipoAvaliacao {
+    CONSULTA_LISTA
+    MAPA_VALORES
+    LIMIAR_NUMERICO
+    SOBREPOSICAO_GEOMETRICA
+  }
+
+  class StatusCriterio {
+    valor : CONFORME | INCONFORME | NAO_DEFINIDO | NAO_APLICAVEL
+    dataAvaliacao
+    versaoCriterio
+    origem : AUTOMATICA | MANUAL | EXTENSAO_GRUPO
+    justificativa [0..1]
+  }
+
+  class FonteDados {
+    nome
+  }
+
+  class ObtencaoDados {
+    dataObtencao
+    versao
+  }
+
+  class DistribuicaoMassa <<derivada>> {
+    data
+    massaConforme
+    massaInconforme
+    massaNaoDefinida
+  }
+
+  class PerfilValidacao {
+    nome
+    versao
+    vigenteDesde
+  }
+
+  class RegraValidacao {
+    ativa
+    toleranciaMaxima : padrão 0%
+  }
+
+  class AvaliacaoLote {
+    data
+    resultado : VALIDADO | NAO_VALIDADO
+  }
+
+  class DDS {
+    dataEmissao
+    tipo : ORIGINAL | RETIFICACAO | CANCELAMENTO
+    hash
+  }
+}
+
+package "Acesso e auditoria" {
+  class Usuario {
+    nome
+    email
+    perfil : PerfilUsuario
+    ativo
+  }
+
+  enum PerfilUsuario {
+    ADMINISTRADOR
+    ANALISTA_CONFORMIDADE
+    OPERADOR_LOTES
+    AUDITOR
+  }
+
+  class Documento {
+    tipo
+    data
+    versao
+  }
+
+  class RegistroAuditoria {
+    dataHora
+    acao
+    entidadeAfetada
+    valorAnterior
+    valorNovo
+  }
+}
+
+' ---------- Cadastro e território ----------
+Fornecedor "1" -- "0..*" Propriedade : possui >
+Propriedade "0..*" -- "0..*" Area : agrupa <
+Propriedade "0..*" --> "1" Regiao : localizada em >
+Fornecedor "0..*" -- "0..*" GrupoEconomico : integra >
+Fornecedor "0..*" -- "0..*" Fornecedor : parente de >
+
+' ---------- Rastreabilidade (DAG) ----------
+Lote "0..*" -- "0..*" Propriedade : origem >
+(Lote, Propriedade) .. Procedencia
+Lote "1..*" -- "0..*" Processo : entrada de >
+(Lote, Processo) .. EntradaProcesso
+Processo "0..1" --> "1..*" Lote : saída >
+Processo "0..*" --> "1" TipoProcesso : do tipo >
+Transferencia "0..*" --> "1" Lote : transfere >
+Transferencia "0..*" --> "1" Fornecedor : origem >
+Transferencia "0..*" --> "1" Fornecedor : destino >
+Baixa "0..*" --> "1" Lote : baixa de >
+Venda "0..1" --> "1" Baixa : realizada por >
+Venda "0..*" --> "1" Comprador : destinada a >
+
+' ---------- Conformidade ----------
+Criterio -[hidden]down- TipoAvaliacao
+Criterio "0..*" --> "0..1" FonteDados : usa >
+FonteDados "1" -- "0..*" ObtencaoDados : registra >
+StatusCriterio "0..*" --> "1" Criterio : referente a >
+StatusCriterio "0..*" --> "0..1" Fornecedor : sobre >
+StatusCriterio "0..*" --> "0..1" Propriedade : sobre >
+StatusCriterio "0..*" --> "0..1" ObtencaoDados : baseado em >
+StatusCriterio "0..*" --> "0..1" StatusCriterio : estendido de >
+StatusCriterio "0..*" --> "0..1" Usuario : alterado por >
+DistribuicaoMassa "0..*" --> "1" Lote : de >
+DistribuicaoMassa "0..*" --> "1" Criterio : por >
+
+PerfilValidacao "1" *-- "1..*" RegraValidacao : contém >
+RegraValidacao "0..*" --> "1" Criterio : sobre >
+AvaliacaoLote "0..*" --> "1" Lote : de >
+AvaliacaoLote "0..*" --> "1" PerfilValidacao : segundo >
+AvaliacaoLote "0..*" --> "0..*" RegraValidacao : falhou em >
+
+' ---------- DDS ----------
+DDS "0..*" --> "1" Lote : declara >
+DDS "0..*" --> "1" AvaliacaoLote : baseada em >
+DDS "0..*" --> "1..*" DistribuicaoMassa : congela >
+DDS "0..*" --> "1" Comprador : emitida para >
+DDS "0..*" --> "0..1" Venda : referente a >
+DDS "0..*" --> "0..1" DDS : retifica / cancela >
+
+' ---------- Acesso e auditoria ----------
+Documento "0..*" --> "1" Usuario : enviado por >
+Documento "0..*" --> "0..1" Fornecedor : anexado a >
+Documento "0..*" --> "0..1" Propriedade : anexado a >
+Documento "0..*" --> "0..1" Lote : anexado a >
+Documento "0..*" --> "0..1" Transferencia : anexado a >
+Documento "0..*" --> "0..1" Venda : fiscal de >
+Documento "0..*" --> "0..1" StatusCriterio : justifica >
+Documento "0..1" --> "0..1" Documento : substitui >
+RegistroAuditoria "0..*" --> "1" Usuario : realizado por >
+
+' ---------- Restrições (regras de negócio) ----------
+legend bottom left
+  <b>Restrições</b>
+  * RN-03: o grafo de lotes é acíclico (DAG).
+  * RN-04: todo lote é rastreável, direta ou transitivamente, a ao menos uma propriedade; sem origem identificada, fica bloqueado para saída.
+  * RN-01: transferências + entradas em processo + baixas <= saldo disponível do lote.
+  * RN-02: massa de saída <= entrada x rendimento; rendimento entre os limites do TipoProcesso.
+  * RN-13: Transferencia exige documento fiscal anexo e não altera a propriedade de origem do lote.
+  * RN-16: StatusCriterio nunca é sobrescrito; cada avaliação gera novo registro.
+  * RN-17: StatusCriterio é {xor} sobre Fornecedor ou Propriedade, conforme o nivelAplicacao do critério.
+  * RN-08: status MANUAL exige justificativa, documento e usuário. RN-07: EXTENSAO_GRUPO aponta o status de origem.
+  * RN-05 / RN-18: DistribuicaoMassa é calculada por balanço de massa; massa não definida nunca vira conforme.
+  * RN-15 / RN-14: DDS não é editável nem excluível; congela avaliação e distribuição vigentes na emissão.
+  * Documento é {xor} anexado a exatamente uma entidade. RNF-10.2: RegistroAuditoria é append-only.
+endlegend
+
+@enduml

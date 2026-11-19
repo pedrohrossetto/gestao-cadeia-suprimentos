@@ -1,0 +1,103 @@
+' Diagrama de classes conceitual (PlantUML), derivado de docs/requisitos_v2.md / requisitos_v2.yaml (v2.0).
+' Visão de alto nível: apenas os conceitos centrais do negócio, atributos essenciais e associações nomeadas.
+' Layout em núcleo: Fornecedor, Propriedade, Lote e StatusConformidade ao centro; conceitos secundários nas bordas. Grupos por cor (ver legenda).
+' O detalhamento (histórico, documentos, usuários, regras e controles) está em classes-dominio.puml.
+' Gerar PNG: plantuml -tpng docs/diagrams/plantuml/classes-conceitual.puml
+
+@startuml classes-conceitual
+title Diagrama de Classes Conceitual - Gestão de Cadeia de Suprimentos
+
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontSize 13
+skinparam class {
+  BorderColor #444444
+  ArrowColor #444444
+}
+hide empty members
+hide circle
+skinparam nodesep 110
+skinparam ranksep 100
+
+abstract class Participante #E3F2FD {
+  nome
+  cpfCnpj
+  contato
+}
+class Fornecedor #E3F2FD
+class Comprador #E3F2FD
+class Propriedade #E3F2FD {
+  nome
+  area
+  cultura
+  localizacao
+}
+
+class Lote #FFF8E1 {
+  identificacao
+  tonelagem
+  cultura
+  data
+}
+class Venda #FFF8E1 {
+  data
+  tonelagem
+}
+abstract class Processo #FFF8E1 {
+  data
+  rendimento
+}
+class Mistura #FFF8E1
+class Transformacao #FFF8E1
+
+class StatusConformidade #E8F5E9 {
+  resultado
+  dataAvaliacao
+}
+class CriterioConformidade #E8F5E9 {
+  nome
+  nivelAplicacao
+}
+class PerfilValidacao #E8F5E9 {
+  nome
+}
+class DDS #E8F5E9 {
+  dataEmissao
+}
+
+' ---------- Generalizações (bordas) ----------
+Participante <|-down- Comprador
+Participante <|-down- Fornecedor
+Processo <|-down- Mistura
+Processo <|-down- Transformacao
+
+' ---------- Núcleo: Fornecedor, Propriedade, Lote e StatusConformidade ----------
+Comprador -[hidden]right- Fornecedor
+Fornecedor "1" -right- "0..*" StatusConformidade : recebe >
+Fornecedor "1" -down- "1..*" Propriedade : possui >
+Propriedade "1" -up- "0..*" StatusConformidade : recebe >
+Propriedade "0..*" -down- "0..*" Lote : origina >
+
+' ---------- Borda direita: critérios e validação ----------
+StatusConformidade "0..*" -down- "1" CriterioConformidade : < define
+PerfilValidacao "0..*" -up- "1..*" CriterioConformidade : exige >
+Lote "0..*" -right- "1" PerfilValidacao : é validado segundo >
+
+' ---------- Borda esquerda: comprador, venda e DDS ----------
+Comprador "1" -down- "0..*" Venda : realiza >
+Venda "0..*" -right- "1" Lote : transfere >
+Comprador "1" -down- "0..*" DDS : recebe >
+DDS "0..*" -right- "1" Lote : declara >
+
+' ---------- Borda inferior: processos ----------
+Lote "1..*" -down- "0..*" Processo : alimenta >
+Processo "0..1" -up- "1..*" Lote : gera >
+
+legend bottom right
+  |<#E3F2FD> Participantes |
+  |<#FFF8E1> Rastreabilidade |
+  |<#E8F5E9> Conformidade |
+endlegend
+
+@enduml

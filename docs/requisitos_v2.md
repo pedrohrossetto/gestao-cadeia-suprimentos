@@ -41,11 +41,11 @@ Compradores e a regulação socioambiental exigem comprovar que os grãos não v
 
 Atores: Administrador, Analista de Conformidade, Operador de Lotes e Auditor (somente leitura).
 
-Entidades principais: fornecedor, propriedade, lote, mistura e transformação, critério de conformidade, status de conformidade, perfil de validação, Score de Risco ESG e DDS.
+Entidades principais: fornecedor, propriedade, lote, mistura e transformação, critério de conformidade, status de conformidade, perfil de validação e DDS.
 
 ### 1.3 Propósito do Sistema
 
-Rastrear os grãos desde as propriedades de origem até o destino final, avaliar a conformidade socioambiental de fornecedores, propriedades e lotes por critério e por balanço de massa, calcular o risco ESG e emitir a DDS ao comprador, com trilha de auditoria. Espera-se reduzir o esforço manual de verificação e permitir comprovar a origem de cada lote.
+Rastrear os grãos desde as propriedades de origem até o destino final, avaliar a conformidade socioambiental de fornecedores, propriedades e lotes por critério e por balanço de massa e emitir a DDS ao comprador, com trilha de auditoria. Espera-se reduzir o esforço manual de verificação e permitir comprovar a origem de cada lote.
 
 ### 1.4 Glossário
 
@@ -59,7 +59,6 @@ Rastrear os grãos desde as propriedades de origem até o destino final, avaliar
 - **Status de conformidade (lote)** — Para cada critério, a distribuição da massa do lote entre conforme, inconforme e não definido, calculada por balanço de massa a partir do status das propriedades e fornecedores de origem, cada critério considerado no seu nível de aplicação. É recalculado quando o status de uma origem muda e pode ser consultado para uma data passada.
 - **Perfil de validação** — Conjunto de regras definido pelo usuário (RF-06.1); cada regra indica um critério do catálogo e a tolerância máxima de massa inconforme e não definida (padrão: 0%). Não existe agregação implícita entre critérios: a decisão sim/não sempre se refere ao perfil.
 - **Lote validado** — Lote que atende todas as regras do perfil de validação vigente na data da avaliação (RF-06.2) e não sofreu alteração de origem desde então.
-- **Score de Risco ESG** — Valor de 0 a 100, em que 0 é o menor risco e 100 o maior.
 
 ## 2. Requisitos Funcionais
 

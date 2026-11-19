@@ -45,13 +45,12 @@ mini_mundo:
   - critério de conformidade
   - status de conformidade
   - perfil de validação
-  - Score de Risco ESG
   - DDS
   entidades_texto: "Entidades principais: fornecedor, propriedade, lote, mistura e transformação, critério\
-    \ de conformidade, status de conformidade, perfil de validação, Score de Risco ESG e DDS."
+    \ de conformidade, status de conformidade, perfil de validação e DDS."
 proposito: Rastrear os grãos desde as propriedades de origem até o destino final, avaliar a conformidade
-  socioambiental de fornecedores, propriedades e lotes por critério e por balanço de massa, calcular o
-  risco ESG e emitir a DDS ao comprador, com trilha de auditoria. Espera-se reduzir o esforço manual de
+  socioambiental de fornecedores, propriedades e lotes por critério e por balanço de massa e emitir
+  a DDS ao comprador, com trilha de auditoria. Espera-se reduzir o esforço manual de
   verificação e permitir comprovar a origem de cada lote.
 glossario:
 - termo: Produtor / fornecedor
@@ -89,8 +88,6 @@ glossario:
 - termo: Lote validado
   definicao: Lote que atende todas as regras do perfil de validação vigente na data da avaliação (RF-06.2)
     e não sofreu alteração de origem desde então.
-- termo: Score de Risco ESG
-  definicao: Valor de 0 a 100, em que 0 é o menor risco e 100 o maior.
 requisitos:
 - id: RF-01.1
   tipo: funcional
