@@ -1,5 +1,5 @@
-' Diagramas de casos de uso (PlantUML). Equivalente a docs/casos-de-uso.md (Mermaid).
-' Gerar PNGs: plantuml -tpng docs/casos-de-uso.puml  (um arquivo por @startuml, nomeado pelo identificador)
+' Diagramas de casos de uso (PlantUML), v1. Equivalente a docs/v1/diagrams/casos-de-uso.md (Mermaid).
+' Gerar PNGs: plantuml -tpng docs/v1/diagrams/plantuml/casos-de-uso.puml  (um arquivo por @startuml, nomeado pelo identificador)
 
 @startuml uc0-visao-geral
 title 0. Visão geral

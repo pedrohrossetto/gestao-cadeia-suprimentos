@@ -8,7 +8,7 @@ estagios:
 - Demo
 - Piloto
 - Pós-piloto
-fonte_estruturada: requisitos-nodaltrace.yaml
+fonte_estruturada: requisitos.yaml
 ---
 
 # Documento de Especificação de Requisitos
@@ -472,7 +472,7 @@ flowchart LR
 
 ## Apêndice B — Como usar com agentes
 
-- A fonte estruturada é `requisitos-nodaltrace.yaml`: cada requisito tem `id`, `tipo`, `estagio`, `depende_de` e `requerido_por` (relação inversa).
+- A fonte estruturada é `requisitos.yaml`: cada requisito tem `id`, `tipo`, `estagio`, `depende_de` e `requerido_por` (relação inversa).
 - Atores e entidades estão em `mini_mundo`; definições de termos em `glossario`.
 - Para diagramas (casos de uso, classes, sequência), derive atores e entidades de `mini_mundo` e as funções de `requisitos` com `tipo: funcional`.
 - Para planejar entregas, filtre por `estagio`; nenhum requisito depende de outro de estágio posterior.
