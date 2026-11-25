@@ -50,11 +50,11 @@ As decisões de arquitetura estão registradas em [`docs/adr/`](docs/adr/):
 | [007](docs/adr/0007-implantacao-gcp.md) | Implantação no Google Cloud (Cloud Run, Cloud SQL com PostGIS, Cloud Storage) |
 | [008](docs/adr/0008-papel-em-relacao-ao-erp.md) | O sistema complementa o ERP: importa dele as movimentações e é a fonte de origem, conformidade e passaportes |
 
-## Diagrama de classes
+## Casos de uso e diagramas
 
-![Diagrama de classes conceitual](docs/v3/diagrams/plantuml/classes-conceitual.png)
+Os casos de uso da v3 estão especificados em [`docs/v3/casos-de-uso/`](docs/v3/casos-de-uso/), cada um com seu diagrama de casos de uso: Registrar lotes, Validar conformidade, Vender lote, Armazenar lote e Transformar lote. O [cenário do ciclo de vida do lote](docs/v3/casos-de-uso/cenario-ciclo-de-vida-do-lote.md) encadeia esses casos em um exemplo de ponta a ponta, com diagrama de atividades.
 
-O diagrama de domínio detalhado está em [`docs/v3/diagrams/plantuml/classes-dominio.png`](docs/v3/diagrams/plantuml/classes-dominio.png), e os casos de uso em [`docs/v3/diagrams/casos-de-uso.md`](docs/v3/diagrams/casos-de-uso.md).
+<!-- TODO: diagrama de classes da v3. Os diagramas de classes existentes são os da v2 (docs/v2/diagrams/plantuml/) e não incluem as mudanças da v3. -->
 
 ## Documentação do projeto
 

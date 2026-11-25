@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| **Módulo** | Lotes e rastreabilidade ([diagrama](../diagrams/casos-de-uso.md#2-lotes-e-rastreabilidade)) |
+| **Módulo** | Lotes e rastreabilidade |
 | **Ator principal** | Operador de Lotes |
 | **Atores secundários** | — |
 | **Estágio** | Piloto |
@@ -20,7 +20,7 @@ Registrar a chegada física de um lote em trânsito a uma unidade de armazenagem
 ## Pré-condições
 
 1. O usuário está autenticado e tem perfil Operador de Lotes ou superior.
-2. O lote está **em trânsito** (registrado no UC07 ou transferido no UC09) ou é um lote de produto gerado no [UC36 — Transformar Lote](uc36-transformar-lote.md), que entra neste caso de uso a partir do passo 3, sem pesagem de chegada.
+2. O lote está **em trânsito** (registrado no UC07 ou transferido entre fornecedores, RF-05.8) ou é um lote de produto gerado no [UC36 — Transformar Lote](uc36-transformar-lote.md), que entra neste caso de uso a partir do passo 3, sem pesagem de chegada.
 3. O passaporte da etapa anterior do lote já foi gerado (RN-20).
 4. A unidade de armazenagem (armazém e silo, célula ou tanque) está cadastrada para a empresa (RF-05.9).
 
@@ -55,7 +55,7 @@ Registrar a chegada física de um lote em trânsito a uma unidade de armazenagem
 **A1 — Unidade já contém outros lotes (armazenagem com mistura)** (passo 6.2)
 1. O sistema informa que armazenar na unidade mistura o lote com os grãos já existentes e mostra como ficaria a distribuição de massa por critério da mistura e se ela continuaria validada.
 2. O Operador confirma a mistura.
-3. O sistema registra o recebimento (passos 7 e 8) e, na mesma operação, uma **mistura** (UC08) que gera um novo lote para o conteúdo da unidade, com as participações de origem combinadas pelas massas (RF-05.2, RF-05.6). Massa inconforme ou não definida não se torna conforme pela mistura (RN-05).
+3. O sistema registra o recebimento (passos 7 e 8) e, na mesma operação, uma **mistura** (RF-05.2) que gera um novo lote para o conteúdo da unidade, com as participações de origem combinadas pelas massas (RF-05.2, RF-05.6). Massa inconforme ou não definida não se torna conforme pela mistura (RN-05).
 4. O sistema gera o passaporte da mistura, com os hashes dos passaportes de entrada (RF-05.5). O caso de uso termina.
 
 **A2 — Recebimento parcial** (passo 3)

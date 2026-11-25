@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| **Módulo** | Conformidade ([diagrama](../diagrams/casos-de-uso.md#3-conformidade)) |
+| **Módulo** | Conformidade |
 | **Ator principal** | Analista de Conformidade |
 | **Atores secundários** | Sistema (worker), na reavaliação automática; Auditor, na consulta |
 | **Estágio** | Piloto (consulta em data passada: Pós-piloto) |
@@ -20,7 +20,7 @@ Decidir se um lote está **validado** ou **não validado** segundo o perfil de v
 ## Pré-condições
 
 1. O usuário está autenticado e tem perfil Analista de Conformidade ou superior.
-2. Existe um perfil de validação vigente com ao menos uma regra ativa (RF-06.1, UC16).
+2. Existe um perfil de validação vigente com ao menos uma regra ativa (RF-06.1).
 3. O lote existe, não foi baixado e tem participações de origem calculadas (RF-05.6).
 
 ## Pós-condições
@@ -48,7 +48,7 @@ Decidir se um lote está **validado** ou **não validado** segundo o perfil de v
 ## Fluxos alternativos
 
 **A1 — Reavaliação automática** (início alternativo, RF-07.3)
-1. Um status de critério de uma origem é registrado (consulta diária às fontes, UC14, ou alteração manual, UC19).
+1. Um status de critério de uma origem é registrado (consulta diária às fontes, RF-03.1, ou alteração manual, RF-07.5).
 2. O worker consome o evento `StatusCriterioRegistrado` e identifica os lotes em estoque ou em trânsito que têm participação dessa origem.
 3. Para cada lote, executa os passos 2 a 6 do fluxo principal.
 4. Se o lote deixou de ser validado, notifica o Operador e o Analista (notificação na interface). O caso de uso termina.
@@ -60,13 +60,13 @@ Decidir se um lote está **validado** ou **não validado** segundo o perfil de v
 
 **A3 — Regularizar e revalidar** (passo 7)
 1. O Analista escolhe uma origem responsável por massa inconforme ou não definida.
-2. O sistema inicia o UC19 — Alterar status de critério manualmente (com justificativa e documento, RN-08).
+2. O sistema inicia a alteração manual do status do critério, com justificativa e documento (RF-07.5, RN-08).
 3. Ao concluir, volta ao passo 2.
 
 ## Fluxos de exceção
 
 **E1 — Sem perfil de validação vigente** (passo 2)
-- O sistema informa que não há perfil vigente e oferece o acesso ao UC16 — Definir perfil de validação. O caso de uso termina sem gravar.
+- O sistema informa que não há perfil vigente e oferece o acesso à definição do perfil de validação (RF-06.1). O caso de uso termina sem gravar.
 
 **E2 — Fonte externa indisponível** (passo 3)
 - O sistema usa o último status obtido com sucesso e exibe a data dele ao lado do critério (RNF-07.1). A avaliação é gravada normalmente, com a data de cada status usado.

@@ -12,13 +12,13 @@ rectangle "Sistema de Gestão da Cadeia de Suprimentos" {
   usecase "UC22 Vender lote" as uc22
   usecase "Verificar versão\ndas origens (RN-19)" as ver
   usecase "Verificar saldo e\nregras de massa (RN-01)" as chk
-  usecase "UC10 Dar baixa em lote" as uc10
-  usecase "UC12 Anexar documento\n(documento fiscal)" as uc12
+  usecase "Dar baixa em lote" as uc10
+  usecase "Anexar documento\n(documento fiscal)" as uc12
   usecase "Gerar passaporte\nda venda (RF-05.5)" as pas
-  usecase "UC21 Cadastrar comprador" as uc21
+  usecase "Cadastrar comprador" as uc21
   usecase "UC17 Validar conformidade" as uc17
   usecase "Confirmar venda de\nlote não validado" as nval
-  usecase "UC11 Exportar passaporte\n(PDF, JSON ou QR Code)" as uc11
+  usecase "Exportar passaporte\n(PDF, JSON ou QR Code)" as uc11
 }
 
 ope --> uc22

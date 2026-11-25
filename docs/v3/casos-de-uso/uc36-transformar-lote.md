@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| **Módulo** | Lotes e rastreabilidade ([diagrama](../diagrams/casos-de-uso.md#2-lotes-e-rastreabilidade)) |
+| **Módulo** | Lotes e rastreabilidade |
 | **Ator principal** | Operador de Lotes |
 | **Atores secundários** | — |
 | **Estágio** | Piloto |
@@ -74,7 +74,7 @@ Cada lote de entrada pode chegar ao processo de duas formas:
 
 **A4 — Unidade de destino já contém o mesmo produto** (passo 9)
 1. O sistema informa que armazenar o lote de produto na unidade o mistura com o conteúdo existente.
-2. O Operador confirma, e o sistema registra também a mistura (UC08), como no fluxo A1 do UC35.
+2. O Operador confirma, e o sistema registra também a mistura (RF-05.2), como no fluxo A1 do UC35.
 
 **A5 — Validar os lotes de produto** (passo 13)
 1. O Operador ou o Analista escolhe validar um lote de produto.

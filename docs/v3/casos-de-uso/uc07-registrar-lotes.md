@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| **Módulo** | Lotes e rastreabilidade ([diagrama](../diagrams/casos-de-uso.md#2-lotes-e-rastreabilidade)) |
+| **Módulo** | Lotes e rastreabilidade |
 | **Ator principal** | Operador de Lotes (no Demo, Usuário) |
 | **Atores secundários** | — |
 | **Estágio** | Demo (cadastro básico); Piloto (participações, passaporte, regras de massa) |
@@ -21,7 +21,7 @@ Registrar um lote de entrada, isto é, uma carga de grãos que sai de uma ou mai
 
 1. O usuário está autenticado e pertence à empresa que receberá o lote (RNF-18).
 2. O usuário tem perfil Operador de Lotes ou superior (no Demo, Usuário ou Administrador).
-3. O fornecedor e as propriedades de origem estão cadastrados (UC01, UC02).
+3. O fornecedor e as propriedades de origem estão cadastrados.
 
 ## Pós-condições
 
@@ -76,7 +76,7 @@ Registrar um lote de entrada, isto é, uma carga de grãos que sai de uma ou mai
 - O sistema mostra a diferença em kg e volta ao passo 4.
 
 **E3 — Origem inconforme em critério bloqueante** (passo 7.3)
-- O sistema recusa o registro e informa, para cada origem bloqueada, o critério, o status, a data da avaliação e a fonte. Sugere ao Analista a regularização (alteração manual com justificativa, UC19). O caso de uso termina sem gravar.
+- O sistema recusa o registro e informa, para cada origem bloqueada, o critério, o status, a data da avaliação e a fonte. Sugere ao Analista a regularização (alteração manual de status com justificativa, RF-07.5). O caso de uso termina sem gravar.
 
 **E4 — Falha na gravação** (passo 9)
 - A transação é desfeita, nada é gravado, e o sistema informa o erro e mantém os dados do formulário para nova tentativa.

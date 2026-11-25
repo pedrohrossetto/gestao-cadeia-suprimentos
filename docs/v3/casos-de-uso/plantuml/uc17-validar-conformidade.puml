@@ -12,12 +12,12 @@ actor "Temporizador" as tmp <<sistema>>
 
 rectangle "Sistema de Gestão da Cadeia de Suprimentos" {
   usecase "UC17 Validar conformidade" as uc17
-  usecase "UC18 Consultar status de\nconformidade do lote\n(distribuição de massa)" as uc18
+  usecase "Consultar status de\nconformidade do lote\n(distribuição de massa)" as uc18
   usecase "Registrar avaliação\ne auditoria" as reg
   usecase "Reavaliar lotes afetados\ne notificar (RF-07.3)" as rea
   usecase "Consultar validação\nem data passada (RF-07.4)" as pas
-  usecase "UC19 Alterar status de\ncritério manualmente" as uc19
-  usecase "UC16 Definir perfil\nde validação" as uc16
+  usecase "Alterar status de\ncritério manualmente" as uc19
+  usecase "Definir perfil\nde validação" as uc16
 }
 
 ana --> uc17

@@ -51,7 +51,7 @@ else (sim)
 endif
 |Temporizador / SICAR|
 :<b>Dia 2</b>
-Consulta diária ao SICAR (UC14)
+Consulta diária ao SICAR (RF-03.1)
 CAR da Santa Clara: ativo;
 |Sistema|
 :Registrar status C3 conforme (RN-10, RN-16)

@@ -7,11 +7,10 @@
 | **Tipo** | Cenário de ponta a ponta. Não é um caso de uso: encadeia casos de uso do sistema ao longo de vários dias e com atores diferentes |
 | **Participantes** | Operador de Lotes, Analista de Conformidade, Temporizador «sistema», SICAR «externo» |
 | **Estágio** | Piloto |
-| **Casos de uso encadeados** | [UC07](uc07-registrar-lotes.md) → [UC35](uc35-armazenar-lote.md) → [UC17](uc17-validar-conformidade.md) → UC14 → [UC36](uc36-transformar-lote.md) (com UC35) → [UC22](uc22-vender-lote.md) |
+| **Casos de uso encadeados** | [UC07](uc07-registrar-lotes.md) → [UC35](uc35-armazenar-lote.md) → [UC17](uc17-validar-conformidade.md) → consulta diária às fontes (RF-03.1) → [UC36](uc36-transformar-lote.md) (com UC35) → [UC22](uc22-vender-lote.md) |
 | **Requisitos** | RF-03.1, RF-05.1, RF-05.3, RF-05.5, RF-05.6, RF-05.9, RF-05.10, RF-05.11, RF-06.2, RF-07.2, RF-07.3, RF-13.2 |
 | **Regras de negócio** | RN-01, RN-02, RN-05, RN-06, RN-10, RN-16, RN-18, RN-19, RN-20, RN-21, RN-23 |
 | **Diagrama de atividades** | [`plantuml/cenario-ciclo-de-vida-do-lote.puml`](plantuml/cenario-ciclo-de-vida-do-lote.puml): raias por participante e nós de objeto com o estado de cada lote |
-| **Estados do lote** | [Máquina de estados do Lote](../diagrams/plantuml/estados-lote.png) ([`.puml`](../diagrams/plantuml/estados-lote.puml)): vale para qualquer lote, não só para este exemplo |
 
 ## Objetivo
 
@@ -84,7 +83,7 @@ Todos os nomes são fictícios. Massas em kg inteiros (RNF-19).
 
 2. Resultado: **não validado**. O sistema aponta a Fazenda Santa Clara como origem da massa não definida.
 
-### Etapa 4 — Consulta diária e reavaliação automática (UC14 e UC17 A1), dia 2
+### Etapa 4 — Consulta diária e reavaliação automática (RF-03.1 e UC17 A1), dia 2
 
 1. O Temporizador dispara a consulta diária ao SICAR (RF-03.1). O CAR da Fazenda Santa Clara está **ativo**: o sistema registra um novo status de C3, **conforme** (RN-10, RN-16), e a versão da Santa Clara passa de 1 para 2.
 2. O evento `StatusCriterioRegistrado` dispara a reavaliação dos lotes com participação da Santa Clara (RF-07.3). L-001 agora tem 29.700 kg conformes em C3 e passa a **validado**. As versões registradas nas participações são atualizadas.
@@ -104,7 +103,7 @@ Todos os nomes são fictícios. Massas em kg inteiros (RNF-19).
 4. F-001 e O-001 são armazenados pelo UC35, a partir do passo 3, sem pesagem de chegada, na Célula F1 e no Tanque T1, que estavam vazios.
 5. O sistema gera os passaportes **P-002** (F-001) e **P-003** (O-001), ambos com o hash de P-001 como entrada (RF-05.5). Os dois lotes de produto estão **validados**: todas as origens estão conformes nos três critérios.
 
-### Etapa 6 — Nova consulta antes da venda (UC14), dia 10
+### Etapa 6 — Nova consulta antes da venda (RF-03.1), dia 10
 
 1. A consulta diária registra uma nova avaliação de C1 para a Fazenda Boa Vista, novamente **conforme**. Mesmo sem mudança de valor, a versão da Boa Vista passa de 3 para 4 (RN-16).
 
@@ -122,7 +121,7 @@ Todos os nomes são fictícios. Massas em kg inteiros (RNF-19).
 | 1 | Registro | UC07 | em trânsito, 30.000 kg, não validado | — | — | P-001 |
 | 1 | Armazenagem | UC35 | em estoque, Silo 2, 29.700 kg | — | — | — |
 | 1 | Validação | UC17 | não validado (C3) | — | — | — |
-| 2 | Consulta SICAR | UC14 → UC17 | validado | — | — | — |
+| 2 | Consulta SICAR | RF-03.1 → UC17 | validado | — | — | — |
 | 3 | Transformação | UC36 + UC35 | em estoque, 9.700 kg | em estoque, Célula F1, 15.400 kg | em estoque, Tanque T1, 3.800 kg | P-002, P-003 |
 | 10 | Venda | UC22 | — | em estoque, 5.400 kg (10.000 kg vendidos) | — | P-004 |
 
@@ -141,6 +140,6 @@ Seguindo P-004 → P-002 → P-001, o comprador comprova a origem dos 10.000 kg 
 |---|---|---|
 | no dia 2 o CAR da Santa Clara viesse **cancelado** | C3 fica inconforme; L-001 continua não validado; F-001 e O-001 nascem não validados; a venda exige confirmação de lote não validado | RN-10, UC22 A3 |
 | a pesagem passasse de 1,5% de quebra | o Operador precisa justificar e o recebimento fica sinalizado para o Analista | RN-23, UC35 E2 |
-| o Silo 2 já tivesse soja de outro lote | a armazenagem vira mistura, com novo lote e participações combinadas | UC35 A1, UC08 |
+| o Silo 2 já tivesse soja de outro lote | a armazenagem vira mistura, com novo lote e participações combinadas | UC35 A1, RF-05.2 |
 | o caminhão fosse direto para a esmagadora | o lote é recebido sem passar pelo silo e entra no processo | UC36 A1 |
 | o rendimento informado fosse 99% | a transformação é recusada por estar fora da faixa do tipo de processo | RN-02, UC36 E1 |

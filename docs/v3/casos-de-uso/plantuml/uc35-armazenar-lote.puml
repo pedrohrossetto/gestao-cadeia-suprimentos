@@ -13,11 +13,11 @@ rectangle "Sistema de Gestão da Cadeia de Suprimentos" {
   usecase "UC35 Armazenar lote" as uc35
   usecase "Verificar capacidade e\ncultura da unidade" as cap
   usecase "Verificar saldo e\nregras de massa" as chk
-  usecase "UC12 Anexar documento\n(ticket de balança)" as uc12
+  usecase "Anexar documento\n(ticket de balança)" as uc12
   usecase "Registrar quebra" as qbr
   usecase "Justificar quebra acima\nda tolerância" as jus
   usecase "Registrar recebimento\nparcial" as parc
-  usecase "UC08 Registrar mistura" as uc08
+  usecase "Registrar mistura" as uc08
 }
 
 ope --> uc35

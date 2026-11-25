@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| **Módulo** | Vendas ([diagrama](../diagrams/casos-de-uso.md#4-vendas)) |
+| **Módulo** | Vendas |
 | **Ator principal** | Operador de Lotes |
 | **Atores secundários** | — (o comprador não interage com o sistema) |
 | **Estágio** | Piloto |
@@ -52,7 +52,7 @@ Registrar a venda de um lote em estoque, total ou parcial, a um comprador, dando
 
 **A1 — Comprador não cadastrado** (passo 3)
 1. O Operador escolhe **Novo comprador**.
-2. O sistema inicia o UC21 — Cadastrar comprador.
+2. O sistema abre o cadastro de comprador (RF-13.1).
 3. Ao concluir, o comprador fica selecionado; volta ao passo 3.
 
 **A2 — Origem mudou desde o último cálculo** (passo 6)
@@ -71,7 +71,7 @@ Registrar a venda de um lote em estoque, total ou parcial, a um comprador, dando
 2. O lote continua **em estoque** com o saldo reduzido; as participações de origem do saldo mantêm a mesma distribuição percentual. Segue para o passo 9.
 
 **A5 — Exportar passaporte para o comprador** (passo 10)
-1. O Operador escolhe exportar o passaporte em PDF, JSON ou QR Code (UC11).
+1. O Operador escolhe exportar o passaporte em PDF, JSON ou QR Code (RF-05.5).
 2. O sistema gera o arquivo a partir do passaporte da venda, sem alterá-lo.
 
 ## Fluxos de exceção
