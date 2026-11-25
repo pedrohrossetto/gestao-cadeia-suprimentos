@@ -1,0 +1,35 @@
+' Diagrama de casos de uso do UC17 Validar Conformidade (v3). Especificação: docs/v3/casos-de-uso/uc17-validar-conformidade.md
+' Gerar PNG: plantuml -tpng docs/v3/casos-de-uso/plantuml/*.puml
+@startuml uc17-validar-conformidade
+title UC17 — Validar Conformidade
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Analista de\nConformidade" as ana
+actor "Auditor" as aud
+actor "Temporizador" as tmp <<sistema>>
+
+rectangle "Sistema de Gestão da Cadeia de Suprimentos" {
+  usecase "UC17 Validar conformidade" as uc17
+  usecase "UC18 Consultar status de\nconformidade do lote\n(distribuição de massa)" as uc18
+  usecase "Registrar avaliação\ne auditoria" as reg
+  usecase "Reavaliar lotes afetados\ne notificar (RF-07.3)" as rea
+  usecase "Consultar validação\nem data passada (RF-07.4)" as pas
+  usecase "UC19 Alterar status de\ncritério manualmente" as uc19
+  usecase "UC16 Definir perfil\nde validação" as uc16
+}
+
+ana --> uc17
+ana --> uc19
+ana --> uc16
+aud --> pas
+tmp --> rea
+
+uc17 ..> uc18 : <<include>>
+uc17 ..> reg : <<include>>
+rea ..> uc17 : <<include>>
+pas ..> uc17 : <<extend>>\n[data informada]
+uc19 ..> uc17 : <<extend>>\n[regularizar origem]
+uc16 ..> uc17 : <<extend>>\n[sem perfil vigente]
+@enduml

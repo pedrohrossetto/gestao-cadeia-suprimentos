@@ -1,0 +1,35 @@
+' Diagrama de casos de uso do UC22 Vender Lote (v3). Especificação: docs/v3/casos-de-uso/uc22-vender-lote.md
+' Gerar PNG: plantuml -tpng docs/v3/casos-de-uso/plantuml/*.puml
+@startuml uc22-vender-lote
+title UC22 — Vender Lote
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Operador de Lotes" as ope
+
+rectangle "Sistema de Gestão da Cadeia de Suprimentos" {
+  usecase "UC22 Vender lote" as uc22
+  usecase "Verificar versão\ndas origens (RN-19)" as ver
+  usecase "Verificar saldo e\nregras de massa (RN-01)" as chk
+  usecase "UC10 Dar baixa em lote" as uc10
+  usecase "UC12 Anexar documento\n(documento fiscal)" as uc12
+  usecase "Gerar passaporte\nda venda (RF-05.5)" as pas
+  usecase "UC21 Cadastrar comprador" as uc21
+  usecase "UC17 Validar conformidade" as uc17
+  usecase "Confirmar venda de\nlote não validado" as nval
+  usecase "UC11 Exportar passaporte\n(PDF, JSON ou QR Code)" as uc11
+}
+
+ope --> uc22
+
+uc22 ..> ver : <<include>>
+uc22 ..> chk : <<include>>
+uc22 ..> uc10 : <<include>>
+uc22 ..> uc12 : <<include>>
+uc22 ..> pas : <<include>>
+uc22 <.. uc21 : <<extend>>\n[comprador não cadastrado]
+uc22 <.. uc17 : <<extend>>\n[origem mudou desde o último cálculo]
+uc22 <.. nval : <<extend>>\n[lote não validado]
+uc22 <.. uc11 : <<extend>>\n[exportar para o comprador]
+@enduml
