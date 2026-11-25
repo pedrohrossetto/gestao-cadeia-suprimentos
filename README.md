@@ -16,7 +16,8 @@ Na prática, o sistema:
 - calcula o status de conformidade de cada lote por **balanço de massa**, acompanhando misturas e transformações ao longo da cadeia;
 - valida lotes segundo um perfil de validação definido pelo usuário;
 - registra cada etapa do lote em um **passaporte digital** encadeado por hash, que comprova a origem e a conformidade do lote até a venda;
-- atende várias empresas clientes em uma mesma instalação, com os dados de cada uma isolados, e mantém trilha de auditoria e tratamento de dados conforme a LGPD.
+- Funciona como serviço na nuvem para várias empresas clientes: cada empresa acessa apenas os próprios dados, e as listas públicas de conformidade (embargos, lista suja, SICAR) são compartilhadas entre todas.
+- Mantém trilha de auditoria e tratamento de dados conforme a LGPD.
 
 ## Requisitos
 
