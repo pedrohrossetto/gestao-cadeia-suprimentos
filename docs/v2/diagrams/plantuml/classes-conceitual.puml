@@ -1,8 +1,8 @@
-' Diagrama de classes conceitual (PlantUML), derivado de docs/requisitos_v2.md / requisitos_v2.yaml (v2.0).
+' Diagrama de classes conceitual (PlantUML), derivado de docs/v2/requisitos.md / requisitos.yaml (v2.0).
 ' Visão de alto nível: apenas os conceitos centrais do negócio, atributos essenciais e associações nomeadas.
 ' Layout em núcleo: Fornecedor, Propriedade, Lote e StatusConformidade ao centro; conceitos secundários nas bordas. Grupos por cor (ver legenda).
 ' O detalhamento (histórico, documentos, usuários, regras e controles) está em classes-dominio.puml.
-' Gerar PNG: plantuml -tpng docs/diagrams/plantuml/classes-conceitual.puml
+' Gerar PNG: plantuml -tpng docs/v2/diagrams/plantuml/classes-conceitual.puml
 
 @startuml classes-conceitual
 title Diagrama de Classes Conceitual - Gestão de Cadeia de Suprimentos

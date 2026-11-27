@@ -1,0 +1,33 @@
+' Diagrama de casos de uso do UC07 Registrar Lotes (v3). Especificação: docs/v3/casos-de-uso/uc07-registrar-lotes.md
+' Gerar PNG: plantuml -tpng docs/v3/casos-de-uso/plantuml/*.puml
+@startuml uc07-registrar-lotes
+title UC07 — Registrar Lotes
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Operador de Lotes" as ope
+actor "Analista de\nConformidade" as ana
+
+rectangle "Sistema de Gestão da Cadeia de Suprimentos" {
+  usecase "UC07 Registrar lotes" as uc07
+  usecase "Verificar documento fiscal\nnão utilizado (RN-12)" as doc
+  usecase "Verificar origens bloqueadas\npor critério (RN-06)" as blq
+  usecase "Atualizar participações\nde origem (RF-05.6)" as par
+  usecase "Gerar passaporte\nda etapa (RF-05.5)" as pas
+  usecase "Anexar documento" as uc12
+  usecase "Registrar origem não\nidentificada (RN-04)" as nid
+  usecase "UC35 Armazenar lote" as uc35
+}
+
+ope --> uc07
+nid -- ana
+
+uc07 ..> doc : <<include>>
+uc07 ..> blq : <<include>>
+uc07 ..> par : <<include>>
+uc07 ..> pas : <<include>>
+uc07 ..> uc12 : <<include>>
+uc07 <.. nid : <<extend>>\n[origem desconhecida]
+uc07 <.. uc35 : <<extend>>\n[lote já chegou ao armazém]
+@enduml

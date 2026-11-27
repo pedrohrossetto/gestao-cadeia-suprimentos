@@ -1,0 +1,113 @@
+' Diagrama de atividades do Cenário — Ciclo de Vida do Lote (v3). Especificação: docs/v3/casos-de-uso/cenario-ciclo-de-vida-do-lote.md
+' Nós retangulares com borda reta são nós de objeto: o lote e seu estado após a ação anterior.
+' Gerar PNG: plantuml -tpng docs/v3/casos-de-uso/plantuml/*.puml
+@startuml cenario-ciclo-de-vida-do-lote
+title Cenário — Ciclo de Vida do Lote (soja → farelo e óleo)
+skinparam shadowing false
+skinparam defaultFontSize 12
+
+|Operador de Lotes|
+|Analista de Conformidade|
+|Temporizador / SICAR|
+|Sistema|
+
+|Operador de Lotes|
+start
+:<b>Dia 1</b>
+Registrar lote de soja com duas origens (UC07)
+Boa Vista 18.000 kg · Santa Clara 12.000 kg
+nota fiscal 1001;
+|Sistema|
+:Verificar nota fiscal, soma das origens
+e critérios bloqueantes (RN-06, RN-12);
+:Calcular participações de origem
+com versões (Boa Vista v3, Santa Clara v1);
+:L-001 : Lote de soja
+[em trânsito] 30.000 kg
+passaporte P-001; <<object>>
+|Operador de Lotes|
+:Pesar e armazenar no Silo 2 (UC35)
+massa recebida 29.700 kg;
+|Sistema|
+if (Quebra <= tolerância de 1,5%? (RN-23)) then (sim: 300 kg = 1%)
+else (não)
+  :Exigir justificativa e sinalizar
+  para conferência do Analista;
+endif
+:Registrar quebra e reduzir participações
+Boa Vista 17.820 kg · Santa Clara 11.880 kg;
+:L-001 : Lote de soja
+[em estoque] Silo 2, 29.700 kg; <<object>>
+|Analista de Conformidade|
+:Validar L-001 pelo perfil
+"Padrão exportação" (UC17);
+|Sistema|
+if (Inconforme + não definido <= 0%
+em todos os critérios?) then (não: C3 com 40% não definido)
+  :L-001 : Lote de soja
+  [em estoque] NÃO VALIDADO
+  origem pendente: Santa Clara; <<object>>
+else (sim)
+endif
+|Temporizador / SICAR|
+:<b>Dia 2</b>
+Consulta diária ao SICAR (RF-03.1)
+CAR da Santa Clara: ativo;
+|Sistema|
+:Registrar status C3 conforme (RN-10, RN-16)
+versão Santa Clara 1 → 2;
+:Reavaliar lotes com participação
+da Santa Clara (UC17 A1, RF-07.3);
+:L-001 : Lote de soja
+[em estoque] VALIDADO; <<object>>
+|Operador de Lotes|
+:<b>Dia 3</b>
+Esmagar soja (UC36)
+retirar 20.000 kg do Silo 2
+saídas: farelo 15.400 kg · óleo 3.800 kg;
+|Sistema|
+if (Rendimento entre 94% e 98%? (RN-02)) then (sim: 96%)
+  :Herdar participações 60/40 (RN-05)
+  farelo 9.240 · 6.160 kg
+  óleo 2.280 · 1.520 kg
+  perda de processo 800 kg;
+else (não)
+  :Recusar transformação;
+  stop
+endif
+:Armazenar produtos (UC35)
+farelo na Célula F1 · óleo no Tanque T1;
+fork
+  :F-001 : Lote de farelo
+  [em estoque] Célula F1, 15.400 kg
+  VALIDADO · passaporte P-002; <<object>>
+fork again
+  :O-001 : Lote de óleo
+  [em estoque] Tanque T1, 3.800 kg
+  VALIDADO · passaporte P-003; <<object>>
+fork again
+  :L-001 : Lote de soja
+  [em estoque] Silo 2, 9.700 kg; <<object>>
+end fork
+|Temporizador / SICAR|
+:<b>Dia 10</b>
+Consulta diária: Boa Vista C1 conforme
+versão Boa Vista 3 → 4;
+|Operador de Lotes|
+:Vender 10.000 kg de F-001
+à Indústria de Rações Gama (UC22);
+|Sistema|
+if (Versões das origens são as atuais? (RN-19)) then (não: Boa Vista 3 ≠ 4)
+  :Recalcular e revalidar F-001
+  resultado: continua validado;
+else (sim)
+endif
+:Baixar 10.000 kg e gerar passaporte
+P-004 (entrada: hash de P-002);
+:F-001 : Lote de farelo
+[em estoque] Célula F1, 5.400 kg; <<object>>
+|Operador de Lotes|
+:Exportar P-004 em PDF com QR Code
+lastro: Boa Vista 6.000 kg · Santa Clara 4.000 kg;
+stop
+@enduml

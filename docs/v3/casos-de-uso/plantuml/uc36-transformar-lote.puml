@@ -1,0 +1,33 @@
+' Diagrama de casos de uso do UC36 Transformar Lote (v3). Especificação: docs/v3/casos-de-uso/uc36-transformar-lote.md
+' Gerar PNG: plantuml -tpng docs/v3/casos-de-uso/plantuml/*.puml
+@startuml uc36-transformar-lote
+title UC36 — Transformar Lote
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Operador de Lotes" as ope
+
+rectangle "Sistema de Gestão da Cadeia de Suprimentos" {
+  usecase "UC36 Transformar lote" as uc36
+  usecase "Verificar saldo e\nregras de massa (RN-01)" as chk
+  usecase "Verificar rendimento\ndo processo (RN-02)" as ren
+  usecase "Atualizar participações\nde origem (RF-05.6)" as par
+  usecase "Gerar passaportes dos\nlotes de produto (RF-05.5)" as pas
+  usecase "UC35 Armazenar lote\n(lote de produto)" as uc35
+  usecase "Retirar lote de unidade\nde armazenagem" as ret
+  usecase "Receber lote direto\nno processo" as rec
+  usecase "UC17 Validar conformidade" as uc17
+}
+
+ope --> uc36
+
+uc36 ..> chk : <<include>>
+uc36 ..> ren : <<include>>
+uc36 ..> par : <<include>>
+uc36 ..> pas : <<include>>
+uc36 ..> uc35 : <<include>>
+uc36 <.. ret : <<extend>>\n[entrada em estoque]
+uc36 <.. rec : <<extend>>\n[entrada em trânsito]
+uc36 <.. uc17 : <<extend>>\n[validar lotes de produto]
+@enduml

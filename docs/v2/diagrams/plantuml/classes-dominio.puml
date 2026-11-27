@@ -1,7 +1,7 @@
-' Diagrama de classes de domínio (PlantUML), refinamento de classes-conceitual.puml; derivado de docs/requisitos_v2.md / requisitos_v2.yaml (v2.0).
+' Diagrama de classes de domínio (PlantUML), refinamento de classes-conceitual.puml; derivado de docs/v2/requisitos.md / requisitos.yaml (v2.0).
 ' Inclui navegabilidade, enumerações, atributos derivados e técnicos, histórico/versionamento e controles de integridade.
 ' O atributo hash é mantido por ser exigência de domínio (RNF-11). Atributos com "/" são derivados.
-' Gerar PNG: plantuml -tpng docs/diagrams/plantuml/classes-dominio.puml
+' Gerar PNG: plantuml -tpng docs/v2/diagrams/plantuml/classes-dominio.puml
 
 @startuml classes-dominio
 title Diagrama de Classes de Domínio - Gestão de Cadeia de Suprimentos (v2.0)

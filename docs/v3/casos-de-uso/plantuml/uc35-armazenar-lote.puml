@@ -1,0 +1,33 @@
+' Diagrama de casos de uso do UC35 Armazenar Lote (v3). Especificação: docs/v3/casos-de-uso/uc35-armazenar-lote.md
+' Gerar PNG: plantuml -tpng docs/v3/casos-de-uso/plantuml/*.puml
+@startuml uc35-armazenar-lote
+title UC35 — Armazenar Lote
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "Operador de Lotes" as ope
+actor "Analista de\nConformidade" as ana
+
+rectangle "Sistema de Gestão da Cadeia de Suprimentos" {
+  usecase "UC35 Armazenar lote" as uc35
+  usecase "Verificar capacidade e\ncultura da unidade" as cap
+  usecase "Verificar saldo e\nregras de massa" as chk
+  usecase "Anexar documento\n(ticket de balança)" as uc12
+  usecase "Registrar quebra" as qbr
+  usecase "Justificar quebra acima\nda tolerância" as jus
+  usecase "Registrar recebimento\nparcial" as parc
+  usecase "Registrar mistura" as uc08
+}
+
+ope --> uc35
+jus -- ana
+
+uc35 ..> cap : <<include>>
+uc35 ..> chk : <<include>>
+uc35 ..> uc12 : <<include>>
+uc35 <.. qbr : <<extend>>\n[massa recebida < esperada]
+qbr <.. jus : <<extend>>\n[quebra > tolerância]
+uc35 <.. parc : <<extend>>\n[só parte da carga chegou]
+uc35 <.. uc08 : <<extend>>\n[unidade com outros lotes]
+@enduml
